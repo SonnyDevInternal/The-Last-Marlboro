@@ -1,6 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+enum ETongueAttack
+{
+    Slash
+}
+
 internal struct TonguePiece
 {
     public Rigidbody body;
@@ -44,8 +49,8 @@ internal struct TonguePiece
     {
         this.body.isKinematic = true;
 
-        this.body.transform.position = this.position;
-        this.body.transform.rotation = this.rotation;
+        this.body.transform.localPosition = this.position;
+        this.body.transform.localRotation = this.rotation;
     }
 
     /*
@@ -74,8 +79,8 @@ internal struct TonguePiece
         this.body = joint.GetComponent<Rigidbody>();
         //this.handler = joint.GetComponent<ColliderHandler>();
 
-        this.position = joint.transform.position;
-        this.rotation = joint.transform.rotation;
+        this.position = joint.transform.localPosition;
+        this.rotation = joint.transform.localRotation;
     }
 }
 
@@ -95,6 +100,9 @@ public struct TongueData
     public TongueDrive Z_Drive;
 
     public int tongueDamage;
+
+    //For Checking if hit Player
+    public float raycastDistance;
 }
 
 public class FreaksterTongueManager : MonoBehaviour
@@ -102,15 +110,19 @@ public class FreaksterTongueManager : MonoBehaviour
     [SerializeField]
     private Animator tongueAnimator = null;
 
+    private FreaksterTongueAnimationHandler tongueAnimHandler = null;
+
     [SerializeField]
     private TongueData tongueData = new TongueData();
 
     private List<TonguePiece> tonguePieces = new List<TonguePiece>();
 
+    private Vector3 targetHitPosition = Vector3.zero;
+
     private bool isTongueToggled = false;
     private bool isInitialized = false;
 
-    private bool skipNextColliderEvent = false;
+    private bool isAttacking = false;
 
 #if DEBUG
     [SerializeField]
@@ -129,21 +141,38 @@ public class FreaksterTongueManager : MonoBehaviour
         {
             tonguePieces[i].UnbindHandler(OnTonguePiece_ColliderEvent);
         }*/
+
+        tongueAnimHandler?.UnbindOnAnimationHandlerCalled(OnTongueAnimEvent);
     }
 
+#if DEBUG
     private void LateUpdate()
     {
-#if DEBUG
+
         if (DEBUG_ToggleTongue)
         {
             DEBUG_ToggleTongue = false;
 
             ActivateTongueRagdoll(!isTongueToggled);
         }
+    }
 #endif
 
-        skipNextColliderEvent = false;
+#if DEBUG
+    private void OnDrawGizmosSelected()
+    {
+        if(tongueAnimator)
+        {
+            var currentObj = gameObject;
+
+            var pos = currentObj.transform.position + (Vector3.down * 0.4f);
+
+            var pos1 = (currentObj.transform.forward * tongueData.raycastDistance);
+
+            Debug.DrawRay(pos, pos1, Color.yellow);
+        }
     }
+#endif
 
     private void Intialize()
     {
@@ -151,6 +180,13 @@ public class FreaksterTongueManager : MonoBehaviour
             return;
 
         isInitialized = true;
+
+        if(tongueAnimator)
+        {
+            tongueAnimHandler = tongueAnimator.GetComponent<FreaksterTongueAnimationHandler>();
+
+            tongueAnimHandler.BindOnAnimationHandlerCalled(OnTongueAnimEvent);
+        }
 
         var joints = GetComponentsInChildren<ConfigurableJoint>(true);
 
@@ -199,6 +235,42 @@ public class FreaksterTongueManager : MonoBehaviour
     }
     */
 
+    public void SlashAttack(Vector3 hitPosition)
+    {
+        this.targetHitPosition = hitPosition;
+
+        this.ActivateTongueRagdoll(false);
+
+        this.tongueAnimator.SetTrigger("SlashAttack");
+    }
+
+    private void OnTongueAnimEvent(AnimationHandler<EFreaksterAnimationEvent> _this, EFreaksterAnimationEvent Event)
+    {
+        isAttacking = false;
+
+        switch (Event)
+        {
+            case EFreaksterAnimationEvent.SlashEnd:
+                var playerMask = EnemyBase.GetPlayerLayerMask();
+
+                var playerDir = (this.targetHitPosition - transform.position).normalized * tongueData.raycastDistance;
+
+                Debug.DrawRay(transform.position, playerDir, Color.red, 2.0f);
+
+                if (Physics.Raycast(transform.position, playerDir, out RaycastHit hitInfo, tongueData.raycastDistance, EnemyBase.GetPlayerLayerMask() | EnemyBase.GetObstacleLayerMask()))
+                {
+                    if ((1 << hitInfo.transform.gameObject.layer) == playerMask)
+                        hitInfo.transform.GetComponent<Player>().DamagePlayer(this.tongueData.tongueDamage);
+                }
+                break;
+
+            default:
+                break;
+        }
+
+        this.ActivateTongueRagdoll(true);
+    }
+
     private void SetRigidAndJointActive(bool active)
     {
         for (int i = 0; i < tonguePieces.Count; i++)
@@ -245,5 +317,10 @@ public class FreaksterTongueManager : MonoBehaviour
     public void SetTongueDamage(int damage)
     {
         tongueData.tongueDamage = damage;
+    }
+
+    public bool IsAttacking()
+    {
+        return isAttacking;
     }
 }

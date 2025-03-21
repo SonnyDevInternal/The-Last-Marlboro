@@ -450,4 +450,9 @@ public abstract class EnemyBase : MonoBehaviour
     {
         return EnemyBase.playerLayerMask;
     }
+
+    public static int GetObstacleLayerMask()
+    {
+        return EnemyBase.obstacleLayerMask;
+    }
 }

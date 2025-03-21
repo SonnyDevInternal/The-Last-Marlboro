@@ -3,7 +3,7 @@ using UnityEngine;
 
 public abstract class AnimationHandler<T> : MonoBehaviour where T : Enum
 {
-    public delegate void OnAnimationHandlerCalled(T value);
+    public delegate void OnAnimationHandlerCalled(AnimationHandler<T> _this, T value);
 
     protected OnAnimationHandlerCalled onAnimationHandlerCalled;
 

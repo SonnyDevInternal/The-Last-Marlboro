@@ -45,4 +45,14 @@ public class Freakster : EnemyBase
                 break;
         }
     }
+
+    protected override void OnAttack()
+    {
+        freaksterTongueManager.SlashAttack(TargetingPlayer.transform.position);
+    }
+
+    protected override bool CanAttack()
+    {
+        return base.CanAttack() && !freaksterTongueManager.IsAttacking();
+    }
 }
