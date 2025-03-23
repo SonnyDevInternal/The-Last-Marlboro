@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -17,6 +19,8 @@ public struct EnemySettings
     public float minFollowDistance;
     public float maxFollowDistance;
 
+    [Tooltip("In radians per Secs")]
+    public float rotateToPlayerSpeed;
 
    // public float idleTime;
     public float findPlayerTime;
@@ -25,11 +29,13 @@ public struct EnemySettings
     public float zSightDegree;
     public float ySightDegree;
 
-    public float enemyMaxHealth;
+    public int enemyMaxHealth;
 
     public bool canAttackPlayer;
     public bool canBeAngered;
     public bool canPatrol;
+
+    public bool shouldLookAtPlayer;
 }
 
 [System.Serializable]
@@ -52,10 +58,12 @@ public abstract class EnemyBase : MonoBehaviour
     static protected int playerLayerMask = 0;
     static protected int obstacleLayerMask = 0;
 
-    static bool hasFoundLayerMasks = false;
+    static private bool hasFoundLayerMasks = false;
 
     //An Enemy already searched for Player this frame so skip
-    static bool triedFindingPlayer = false;
+    static private bool triedFindingPlayer = false;
+
+    static protected bool hasTargetingPlayer = false;
 
     protected NavMeshAgent agent = null;
     protected Animator animator = null;
@@ -77,12 +85,11 @@ public abstract class EnemyBase : MonoBehaviour
     private float findPlayerTime_Current = 0.0f;
     private int patrollingPoint = 0;
 
-    private float currentHealth = 0.0f;
+    private int currentHealth = 0;
 
     private int ANIMATOR_characterSpeed_ID = 0;
     private int ANIMATOR_idilingTime_ID = 0;
 
-    private bool hasTargetingPlayer = false;
     private bool isSeeingPlayer = false;
     private bool isDead = false;
     private bool isIdling = false;
@@ -104,6 +111,13 @@ public abstract class EnemyBase : MonoBehaviour
             playerLayerMask = LayerMask.GetMask("Player");
             obstacleLayerMask = LayerMask.GetMask("Obstacle");
         }
+
+#if DEBUG
+        if(!head)
+        {
+            throw new NullReferenceException("Enemy is Missing Head GameObject Reference!");
+        }
+#endif
 
         currentHealth = enemySettings.enemyMaxHealth;
 
@@ -131,6 +145,13 @@ public abstract class EnemyBase : MonoBehaviour
 #if DEBUG
     private void OnDrawGizmosSelected()
     {
+        if (!head)
+        {
+            Debug.LogWarning("Can't Draw Gizmos, Missing Head GameObject!");
+
+            return;
+        }
+
         if(enemySettings.xSightDegree > 0.0f && enemySettings.zSightDegree > 0.0f)
         {
             var forward = head.forward;
@@ -187,10 +208,22 @@ public abstract class EnemyBase : MonoBehaviour
                 findPlayerTime_Current += Time.deltaTime;
         }
 
+        if (hasTargetingPlayer && enemySettings.shouldLookAtPlayer)
+        {
+            var playerPos = TargetingPlayer.transform.position;
+
+            var currentVelocity = agent.velocity.magnitude;
+
+            if (currentVelocity <= 0.1f)
+                RotateToPlayer(playerPos);
+        }
+
 
 #if DEBUG
-        if(isSeeingPlayer)
+        /*
+        if (isSeeingPlayer)
             Debug.Log("Seeing Player!");
+        */
 #endif
 
         OnUpdateAgent();
@@ -247,11 +280,13 @@ public abstract class EnemyBase : MonoBehaviour
                 }
                 else
                 {
-                    if(TargetingPlayer && isSeeingPlayer || playerDistance <= enemySettings.minFollowDistance)
+                    if(hasTargetingPlayer && isSeeingPlayer || playerDistance <= enemySettings.minFollowDistance)
                     {
                         var playerPos = TargetingPlayer.transform.position;
+                        var playerDir = (playerPos - transform.position).normalized;
 
-                        OnMoveAgent(playerPos - ((playerPos - transform.position).normalized) * enemySettings.maxFollowDistance);
+                        if (playerDistance > enemySettings.maxFollowDistance)
+                            OnMoveAgent(playerPos - (playerDir) * enemySettings.maxFollowDistance);
                     }
                     else
                     {
@@ -265,7 +300,8 @@ public abstract class EnemyBase : MonoBehaviour
 
                 break;
             case EEnemyState.AttackPlayer:
-                if(CanAttack())
+
+                if (hasTargetingPlayer && CanAttack())
                 {
                     OnAttack();
                 }
@@ -307,6 +343,15 @@ public abstract class EnemyBase : MonoBehaviour
     {
         TargetingPlayer = null;
         hasTargetingPlayer = false;
+    }
+
+    private void RotateToPlayer(Vector3 playerPos)
+    {
+        var playerDir = (playerPos - transform.position).normalized;
+
+        var nextRotation = Quaternion.LookRotation(playerDir);
+
+        transform.rotation = Quaternion.Slerp(transform.rotation, nextRotation, enemySettings.rotateToPlayerSpeed * Time.deltaTime);
     }
 
     private void UpdateAnimations()
@@ -352,6 +397,13 @@ public abstract class EnemyBase : MonoBehaviour
         return Mathf.Infinity;
     }
 
+    private void EnemyDied()
+    {
+        isDead = true;
+
+        OnEnemyDeath(EDeathSource.Player);
+    }
+
     protected float GetPlayerDistance()
     {
         return playerDistance;
@@ -369,7 +421,7 @@ public abstract class EnemyBase : MonoBehaviour
 
     protected virtual bool IsPlayerVisible()
     {
-        if (TargetingPlayer == null) 
+        if (TargetingPlayer == null || head == null) 
             return false;
 
         Vector3 directionToPlayer = (TargetingPlayer.transform.position - head.position).normalized;
@@ -444,6 +496,38 @@ public abstract class EnemyBase : MonoBehaviour
     protected virtual void OnStartAgent()
     {
 
+    }
+
+    protected bool IsSeeingPlayer()
+    {
+        return isSeeingPlayer;
+    }
+
+    protected float DistanceToPlayer()
+    {
+        return playerDistance;
+    }
+
+    public void DamageHealth(int value)
+    {
+        currentHealth -= value;
+
+        if (currentHealth <= 0)
+        {
+            currentHealth = 0;
+
+            EnemyDied();
+        }
+    }
+
+    public void HealHealth(int value, bool healOverMax = false)
+    {
+        currentHealth += value;
+
+        if (!healOverMax && currentHealth > enemySettings.enemyMaxHealth)
+        {
+            currentHealth = enemySettings.enemyMaxHealth;
+        }
     }
 
     public static int GetPlayerLayerMask()

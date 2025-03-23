@@ -9,6 +9,6 @@ public class FreaksterTongueAnimationHandler : AnimationHandler<EFreaksterAnimat
 {
     private void OnAnimationSlashEnd()
     {
-        this.onAnimationHandlerCalled(this, EFreaksterAnimationEvent.SlashEnd);
+        CallEvent(EFreaksterAnimationEvent.SlashEnd);
     }
 }

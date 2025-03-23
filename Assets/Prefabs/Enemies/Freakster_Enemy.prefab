@@ -2391,6 +2391,7 @@ MonoBehaviour:
     minAttackDistance: 1.9
     minFollowDistance: 4
     maxFollowDistance: 1.8
+    rotateToPlayerSpeed: 2
     findPlayerTime: 1
     xSightDegree: 98
     zSightDegree: 14.1
@@ -2399,11 +2400,13 @@ MonoBehaviour:
     canAttackPlayer: 1
     canBeAngered: 1
     canPatrol: 1
+    shouldLookAtPlayer: 1
   patrollingTargets: []
   head: {fileID: 4868616074781149139}
   freaksterSettings:
     patrollingSpeed: 3
-    followingSpeed: 6.2
+    followingSpeed: 4
+    TongueAttackDamage: 5
 --- !u!195 &7393901361211079812
 NavMeshAgent:
   m_ObjectHideFlags: 0

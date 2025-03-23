@@ -136,6 +136,8 @@ public class FreaksterTongueManager : MonoBehaviour
 
     private void OnDestroy()
     {
+        if(tongueAnimator)
+            tongueAnimator.enabled = false;
         /*
         for (int i = 0; i < tonguePieces.Count; i++)
         {

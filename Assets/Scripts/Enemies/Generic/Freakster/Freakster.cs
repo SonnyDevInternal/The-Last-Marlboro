@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -6,6 +7,8 @@ public struct FreaksterSettings
 {
     public float patrollingSpeed;
     public float followingSpeed;
+
+    public int TongueAttackDamage;
 }
 
 public class Freakster : EnemyBase
@@ -19,7 +22,12 @@ public class Freakster : EnemyBase
     {
         freaksterTongueManager = GetComponentInChildren<FreaksterTongueManager>();
 
-        freaksterTongueManager.ActivateTongueRagdoll(true);
+        if(freaksterTongueManager != null )
+            freaksterTongueManager.ActivateTongueRagdoll(true);
+#if DEBUG
+        else
+            throw new NullReferenceException("Freakster Tongue manager was null! Tongue is missing from the Freakster");
+#endif
     }
 
     protected override void OnUpdateAgent()
@@ -48,6 +56,16 @@ public class Freakster : EnemyBase
 
     protected override void OnAttack()
     {
+        if (!freaksterTongueManager)
+        {
+#if DEBUG
+            Debug.LogError("Freakster can't Attack since the TongueManager is Missing!");
+#endif
+            return;
+        }
+
+        freaksterTongueManager.SetTongueDamage(freaksterSettings.TongueAttackDamage);
+
         freaksterTongueManager.SlashAttack(TargetingPlayer.transform.position);
     }
 

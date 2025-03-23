@@ -1,99 +1,4 @@
 using UnityEngine;
-using Unity.IO.LowLevel.Unsafe;
-using Unity.VisualScripting;
-using JetBrains.Annotations;
-
-public struct PBool
-{
-    public enum EBoolState
-    {
-        Error = -1,
-        False = 0,
-        True = 1,
-        FalseThisFrame = 2,
-        TrueThisFrame = 3,
-    }
-
-    public char value;
-
-    public PBool(EBoolState state)
-    {
-        value = (char)state;
-    }
-
-    public PBool(bool state)
-    {
-        value = '\0';
-
-        value = boolToChar(state);
-    }
-
-    public PBool(char state)
-    {
-        value = state;
-    }
-
-    private char boolToChar(bool state)
-    {
-        char out_ = '\0';
-
-        switch (state)
-        {
-            case false:
-                out_ = '\0';
-                break;
-            case true:
-                out_ = '\x0001';
-                break;
-        }
-
-        return out_;
-    }
-
-    public void DeframeBool() //Call to deframe bool
-    {
-        switch(GetState())
-        {
-            case EBoolState.FalseThisFrame:
-                value = boolToChar(false);
-                break;
-
-            case EBoolState.TrueThisFrame:
-                value = boolToChar(true);
-                break;
-        }
-    }
-
-    public EBoolState GetState()
-    {
-        return (EBoolState)value;
-    }
-
-    public char GetCharState()
-    {
-        return value;
-    }
-
-    public bool GetBool() //Doesnt account for This frame or not!
-    {
-        switch (GetState())
-        {
-            case EBoolState.False:
-                return false;
-
-            case EBoolState.True:
-                return true;
-
-            case EBoolState.FalseThisFrame:
-                return false;
-
-            case EBoolState.TrueThisFrame:
-                return true;
-        }
-
-        return false;
-    }
-}
 
 public struct PlayerSaveData
 {
@@ -139,6 +44,9 @@ public class Player : MonoBehaviour
     [SerializeField]
     protected GameObject head = null;
 
+    //[SerializeField]
+    //protected 
+
     protected Rigidbody playerRigidBody = null;
     protected CapsuleCollider playerCapsuleCollider = null;
 
@@ -159,7 +67,7 @@ public class Player : MonoBehaviour
     public bool isConsumingStamina = true;
     public bool isLocalPlayer = false;
 
-    public PBool isAlive = new PBool(true);
+    public bool isAlive = true;
 
     protected bool isMovementHooked = false;
 
@@ -280,16 +188,8 @@ public class Player : MonoBehaviour
         }
 
         this.UpdatePlayerGravity();
-
-        this.isAlive.DeframeBool();
-
-        DeframeBools();
     }
 
-    protected virtual void DeframeBools()
-    {
-
-    }
 
     public void DamagePlayer(int DamageValue)
     {
@@ -305,7 +205,7 @@ public class Player : MonoBehaviour
     {
         currentHealth += healValue;
 
-        if(!healOverMax && currentHealth >= maxHealAmount)
+        if(!healOverMax && currentHealth > maxHealAmount)
             currentHealth = maxHealAmount;
     }
 
@@ -412,16 +312,6 @@ public class Player : MonoBehaviour
     public void UpdateRotation(Vector3 rotation)
     {
         this.transform.Rotate(rotation);
-    }
-
-    public void KillPlayer()
-    {
-        this.isAlive = new PBool(PBool.EBoolState.FalseThisFrame);
-    }
-
-    public void RevivePlayer()
-    {
-        this.isAlive = new PBool(PBool.EBoolState.TrueThisFrame);
     }
 
     public void SetCanMove(bool canMove)
