@@ -23,6 +23,8 @@ public class LocalPlayer : MonoBehaviour
     [SerializeField]
     private Slider sensitivitySlider = null;
 
+    private int ItemSlots = 4;
+
     private bool hasPlayer = false;
 
     private bool hasGameStateUI = false;
@@ -225,6 +227,23 @@ public class LocalPlayer : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Space) && this.owningPlayer.IsGrounded())
             movement |= Player.PlayerMovement.Up;
+
+        if(Input.GetKey(KeyCode.E))
+        {
+            var camTransform = playerCamera.transform;
+
+            this.owningPlayer.TryInteract(camTransform.position, camTransform.forward);
+        }
+
+        for (int i = 0; i < ItemSlots; i++)
+        {
+            if (Input.GetKeyDown(KeyCode.Alpha1 + i))
+                this.owningPlayer.ActivateSlot(i);
+
+        }
+
+        if (Input.GetKey(KeyCode.Mouse0))
+            this.owningPlayer.TryUseActiveItem();
 
         this.owningPlayer.OnClientMove(movement);
 

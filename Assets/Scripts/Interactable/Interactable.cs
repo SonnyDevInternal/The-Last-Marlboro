@@ -15,19 +15,19 @@ public class Interactable : MonoBehaviour
     public void BindOnInteracted(OnInteracted onInteracted) { this.onInteracted += onInteracted; }
     public void UnbindOnInteracted(OnInteracted onInteracted) { this.onInteracted -= onInteracted; }
 
+    protected virtual void OnInteract(Player player)
+    {
+
+    }
+
     public void Interact(Player player)
     {
         if (!CanInteract(player.transform.position))
             return;
 
-        OnInteract();
+        OnInteract(player);
 
         onInteracted?.Invoke(this, player);
-    }
-
-    protected virtual void OnInteract()
-    {
-
     }
 
     public virtual bool CanInteract(Vector3 playerPos)

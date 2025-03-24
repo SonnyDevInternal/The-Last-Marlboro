@@ -41,8 +41,13 @@ public class Player : MonoBehaviour
         GameEnded
     }
 
+    protected Inventory playerInventory = null;
+
     [SerializeField]
     protected GameObject head = null;
+
+    [SerializeField]
+    protected GameObject leftHand = null;
 
     //[SerializeField]
     //protected 
@@ -99,6 +104,8 @@ public class Player : MonoBehaviour
     protected float timeSinceDamaged_Current = 0.0f;
     protected float timeSinceDamaged = 2.0f;
 
+    public float interactDistance = 10.0f;
+
     public delegate void OnUpdatePlayer(Player _this);
     public delegate void OnDestroyPlayer(Player _this, bool ByScene);
     public delegate PlayerMovement OnMovePlayerHook(Player _this, PlayerMovement originalMovement);
@@ -124,6 +131,8 @@ public class Player : MonoBehaviour
     {
         playerRigidBody = GetComponent<Rigidbody>();
         playerCapsuleCollider = GetComponent<CapsuleCollider>();
+
+        playerInventory = GetComponent<Inventory>();
 
         Initialize();
     }
@@ -469,6 +478,37 @@ public class Player : MonoBehaviour
             OnRotateCharacter(addValue);
     }
 
+    public void TryInteract(Vector3 lookPos, Vector3 lookDirection)
+    {
+#if DEBUG
+        Debug.DrawRay(lookPos, lookDirection * interactDistance, Color.red, 10.0f);
+#endif
+        if(Physics.Raycast(lookPos, lookDirection, out RaycastHit hit, interactDistance, 1 << Item.GetInteractableLayer()))
+        {
+            var interactable = hit.transform.GetComponent<Interactable>();
+
+            if(interactable)
+            {
+                interactable.Interact(this);
+            }
+        }
+    }
+
+    public void TryUseActiveItem()
+    {
+        if (playerInventory.HasActiveItem())
+        {
+            var item = playerInventory.GetActiveItem();
+
+            item.UseItem();
+        }
+    }
+
+    public void ActivateSlot(int Index)
+    {
+        playerInventory.ToggleItemOnIndex(Index);
+    }
+
     protected bool CanPerformDrag()
     {
         return !isForcedSliding;
@@ -519,6 +559,16 @@ public class Player : MonoBehaviour
     public int GetMaxHealth()
     {
         return maxHealth;
+    }
+
+    public GameObject GetInteractionHolder()
+    {
+        return leftHand;
+    }
+
+    public Inventory GetInventory()
+    {
+        return playerInventory;
     }
 
     public void SetStamina(float stamina)
