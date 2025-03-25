@@ -42,6 +42,10 @@ public class Smoker : EnemyBase
     {
         if (smokerHandler != null)
             smokerHandler.UnbindOnAnimationHandlerCalled(OnSmokerAnimationEvent);
+
+        base.OnEnemyDeath(source);
+
+        animator.SetTrigger("Death");
     }
 
     protected override void OnUpdateAgent()

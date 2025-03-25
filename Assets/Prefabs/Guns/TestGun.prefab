@@ -166,3 +166,7 @@ MonoBehaviour:
     toggleRigidBodyOnPickup: 0
     toggleMeshRenderersOnPickup: 1
     setStateOnStart: 0
+  hitCubesPrefab: {fileID: 2857495048278442269, guid: 056a30cf064b1154d8888a90db6180e9, type: 3}
+  gunSettings:
+    gunRayDistance: 0
+    gunShootTimer: 0

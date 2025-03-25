@@ -246,13 +246,13 @@ public class FreaksterTongueManager : MonoBehaviour
         this.tongueAnimator.SetTrigger("SlashAttack");
     }
 
-    private void OnTongueAnimEvent(AnimationHandler<EFreaksterAnimationEvent> _this, EFreaksterAnimationEvent Event)
+    private void OnTongueAnimEvent(AnimationHandler<EFreaksterTongueAnimationEvent> _this, EFreaksterTongueAnimationEvent Event)
     {
         isAttacking = false;
 
         switch (Event)
         {
-            case EFreaksterAnimationEvent.SlashEnd:
+            case EFreaksterTongueAnimationEvent.SlashEnd:
                 var playerMask = EnemyBase.GetPlayerLayerMask();
 
                 var playerDir = (this.targetHitPosition - transform.position).normalized * tongueData.raycastDistance;

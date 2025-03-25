@@ -36,6 +36,7 @@ public struct EnemySettings
     public bool canPatrol;
 
     public bool shouldLookAtPlayer;
+    public bool useBasicHitboxes;
 }
 
 [System.Serializable]
@@ -67,6 +68,9 @@ public abstract class EnemyBase : MonoBehaviour
 
     protected NavMeshAgent agent = null;
     protected Animator animator = null;
+
+    [SerializeField]
+    protected Material mainHitMaterial = null;
 
     [SerializeField]
     protected EnemySettings enemySettings = new EnemySettings();
@@ -123,6 +127,19 @@ public abstract class EnemyBase : MonoBehaviour
 
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponentInChildren<Animator>();
+
+        if(enemySettings.useBasicHitboxes)
+        {
+            var hitboxes = GetComponentsInChildren<Hitbox>();
+
+            for (int i = 0; i < hitboxes.Length; i++)
+            {
+                if(mainHitMaterial)
+                    hitboxes[i].hitMaterial = mainHitMaterial;
+
+                hitboxes[i].BindEnemyToHitbox(this);
+            }
+        }
 
         ANIMATOR_characterSpeed_ID = Animator.StringToHash("characterSpeed");
         ANIMATOR_idilingTime_ID = Animator.StringToHash("idilingTime");
@@ -451,6 +468,19 @@ public abstract class EnemyBase : MonoBehaviour
 
     protected virtual void OnEnemyDeath(EDeathSource source)
     {
+        if (enemySettings.useBasicHitboxes)
+        {
+            var hitboxes = GetComponentsInChildren<Hitbox>();
+
+            for (int i = 0; i < hitboxes.Length; i++)
+            {
+                hitboxes[i].UnbindEnemy();
+            }
+        }
+
+        animator.SetFloat(ANIMATOR_characterSpeed_ID, 0.0f);
+
+        animator.SetFloat(ANIMATOR_idilingTime_ID, 0.0f);
 
     }
 
@@ -516,6 +546,8 @@ public abstract class EnemyBase : MonoBehaviour
         {
             currentHealth = 0;
 
+            Debug.Log("Enemy Death");
+
             EnemyDied();
         }
     }
@@ -532,11 +564,11 @@ public abstract class EnemyBase : MonoBehaviour
 
     public static int GetPlayerLayerMask()
     {
-        return EnemyBase.playerLayerMask;
+        return playerLayerMask;
     }
 
     public static int GetObstacleLayerMask()
     {
-        return EnemyBase.obstacleLayerMask;
+        return obstacleLayerMask;
     }
 }

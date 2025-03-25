@@ -18,8 +18,13 @@ public class Freakster : EnemyBase
 
     private FreaksterTongueManager freaksterTongueManager = null;
 
+
+    private float freaksterDespawnTimeCurrent = 0.0f;
+
     protected override void OnStartAgent()
     {
+        GetComponentInChildren<FreaksterAnimationHandler>().BindOnAnimationHandlerCalled(OnFreaksterAnimEvent);
+
         freaksterTongueManager = GetComponentInChildren<FreaksterTongueManager>();
 
         if(freaksterTongueManager != null )
@@ -72,5 +77,17 @@ public class Freakster : EnemyBase
     protected override bool CanAttack()
     {
         return base.CanAttack() && !freaksterTongueManager.IsAttacking();
+    }
+
+    protected override void OnEnemyDeath(EDeathSource source)
+    {
+        base.OnEnemyDeath(source);
+
+        animator.SetTrigger("Death");
+    }
+
+    private void OnFreaksterAnimEvent(AnimationHandler<EFreaksterAnimationEvent> _this, EFreaksterAnimationEvent Event)
+    {
+        Destroy(gameObject);
     }
 }

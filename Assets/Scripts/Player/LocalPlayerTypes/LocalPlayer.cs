@@ -3,8 +3,8 @@ using UnityEngine.UI;
 
 public class LocalPlayer : MonoBehaviour
 {
-    protected float CameraRotSpeedX = 100.0f;
-    protected float CameraRotSpeedY = 100.0f;
+    protected float CameraRotSpeedX = 400.0f;
+    protected float CameraRotSpeedY = 400.0f;
 
     [SerializeField]
     private Player owningPlayer = null;
@@ -281,7 +281,7 @@ public class LocalPlayer : MonoBehaviour
         return this.gameState;
     }
 
-    protected Camera GetPlayerCamera()
+    public Camera GetPlayerCamera()
     {
         return this.playerCamera;
     }

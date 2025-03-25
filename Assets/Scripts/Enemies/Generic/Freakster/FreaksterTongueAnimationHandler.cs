@@ -1,14 +1,14 @@
 using UnityEngine;
 
-public enum EFreaksterAnimationEvent
+public enum EFreaksterTongueAnimationEvent
 {
     SlashEnd,
 }
 
-public class FreaksterTongueAnimationHandler : AnimationHandler<EFreaksterAnimationEvent>
+public class FreaksterTongueAnimationHandler : AnimationHandler<EFreaksterTongueAnimationEvent>
 {
     private void OnAnimationSlashEnd()
     {
-        CallEvent(EFreaksterAnimationEvent.SlashEnd);
+        CallEvent(EFreaksterTongueAnimationEvent.SlashEnd);
     }
 }
