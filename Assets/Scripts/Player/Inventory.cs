@@ -86,7 +86,7 @@ public class Inventory : MonoBehaviour
 
         itemHolders.Add(item);
 
-        if (inventorySettings.activateItemOnPickup && !hasActiveItem)
+        if (inventorySettings.activateItemOnPickup)
             ActivateItem(item, true);
     }
 
