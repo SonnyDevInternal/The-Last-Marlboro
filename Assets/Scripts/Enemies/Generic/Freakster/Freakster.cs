@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-using UnityEngine.AI;
+
 
 [System.Serializable]
 public struct FreaksterSettings
@@ -18,16 +18,29 @@ public class Freakster : EnemyBase
 
     private FreaksterTongueManager freaksterTongueManager = null;
 
+    private FreaksterAnimationHandler freaksterHandler = null;
 
-    private float freaksterDespawnTimeCurrent = 0.0f;
+    [SerializeField]
+    private UI_Bar3D healthBar = null;
+
+    private bool hasFreaksterHealthbar = false;
+
 
     protected override void OnStartAgent()
     {
-        GetComponentInChildren<FreaksterAnimationHandler>().BindOnAnimationHandlerCalled(OnFreaksterAnimEvent);
+        freaksterHandler = GetComponentInChildren<FreaksterAnimationHandler>();
+
+        if (freaksterHandler)
+            freaksterHandler.BindOnAnimationHandlerCalled(OnFreaksterAnimEvent);
 
         freaksterTongueManager = GetComponentInChildren<FreaksterTongueManager>();
 
-        if(freaksterTongueManager != null )
+        hasFreaksterHealthbar = healthBar != null;
+
+        if (hasFreaksterHealthbar)
+            OnEnemyHealthChanged(0);
+
+        if (freaksterTongueManager != null )
             freaksterTongueManager.ActivateTongueRagdoll(true);
 #if DEBUG
         else
@@ -37,7 +50,14 @@ public class Freakster : EnemyBase
 
     protected override void OnUpdateAgent()
     {
+        if (hasFreaksterHealthbar && hasTargetingPlayer)
+        {
+            var targetRotation = Quaternion.LookRotation(TargetingPlayer.transform.position - transform.position);
 
+            var targetVec = targetRotation.eulerAngles; targetVec.z = 0;
+
+            healthBar.transform.rotation = Quaternion.Euler(targetVec);
+        }
     }
 
     protected override void OnSwitchedEnemyState(EEnemyState state)
@@ -83,11 +103,35 @@ public class Freakster : EnemyBase
     {
         base.OnEnemyDeath(source);
 
-        animator.SetTrigger("Death");
+        if (source == EDeathSource.Scene && freaksterHandler != null)
+        {
+            freaksterHandler.UnbindOnAnimationHandlerCalled(OnFreaksterAnimEvent);
+
+            hasFreaksterHealthbar = false;
+        }
+        else
+            animator.SetTrigger("Death");
+    }
+
+    protected override void OnEnemyHealthChanged(int valueChangedBy)
+    {
+        if(hasFreaksterHealthbar)
+            healthBar.SetPercentage((float)GetHealth() / (float)enemySettings.enemyMaxHealth);
     }
 
     private void OnFreaksterAnimEvent(AnimationHandler<EFreaksterAnimationEvent> _this, EFreaksterAnimationEvent Event)
     {
-        Destroy(gameObject);
+        switch(Event)
+        {
+            case EFreaksterAnimationEvent.Death:
+                if(freaksterHandler != null)
+                    freaksterHandler.UnbindOnAnimationHandlerCalled(OnFreaksterAnimEvent);
+
+                Destroy(gameObject);
+                break;
+
+            default:
+                break;
+        }
     }
 }

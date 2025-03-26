@@ -22,7 +22,6 @@ public class BaseGun : Item
 
     protected float lastGunShootTimer = 0;
 
-
     protected virtual void OnGunHitParticle(Material hitMaterial, Vector3 position, Vector3 direction)
     {
         var instatiated = Instantiate(hitCubesPrefab, position, Quaternion.Euler(Vector3.zero));
@@ -57,9 +56,11 @@ public class BaseGun : Item
                 Debug.DrawRay(lcTransform.position, lcTransform.forward * gunSettings.gunRayDistance, Color.green, 10.0f);
 #endif
 
-                if (Physics.Raycast(lcTransform.position, lcTransform.forward, out RaycastHit hit, gunSettings.gunRayDistance))
+                if (Physics.Raycast(lcTransform.position, lcTransform.forward, out RaycastHit hit, gunSettings.gunRayDistance, ~(EnemyBase.GetPlayerLayerMask() | (1 << IgnoreRaycastLayer))))
                 {
-                    if (hit.transform.gameObject.layer == hitboxLayer)
+                    var currentLayer = hit.transform.gameObject.layer;
+
+                    if (currentLayer == hitboxLayer)
                     {
                         Debug.Log("Hit Enemy!");
 

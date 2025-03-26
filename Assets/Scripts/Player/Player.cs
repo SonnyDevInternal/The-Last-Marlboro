@@ -1,13 +1,37 @@
+using static UnityEngine.JsonUtility;
 using UnityEngine;
+using System.IO;
+using Unity.VisualScripting;
+using UnityEngine.SceneManagement;
 
 public struct PlayerSaveData
 {
     public Vector3 position;
+    public Quaternion rotation;
     public Vector3 velocity;
     public int sceneID;
+    public int characterID;
 
     public float stamina;
-    public char isAlive;
+    public bool isAlive;
+
+    string GetSaveData()
+    {
+        return JsonUtility.ToJson(this);
+    }
+
+    bool LoadSaveData(string jsonSaveData)
+    {
+        try
+        {
+            JsonUtility.FromJsonOverwrite(jsonSaveData, this);
+            return true;
+        }
+        catch (System.Exception)
+        {
+            return false;
+        }
+    }
 }
 
 public class Player : MonoBehaviour
@@ -40,6 +64,8 @@ public class Player : MonoBehaviour
         GameStarted,
         GameEnded
     }
+
+    static PlayerSaveData saveData = new PlayerSaveData();
 
     protected Inventory playerInventory = null;
 
@@ -574,5 +600,16 @@ public class Player : MonoBehaviour
     public void SetStamina(float stamina)
     {
         currentStamina = stamina;
+    }
+
+    void SavePlayerData()
+    {
+        saveData.isAlive = isAlive;
+        saveData.position = transform.position;
+        saveData.stamina = currentStamina;
+        saveData.rotation = transform.rotation;
+        saveData.velocity = playerRigidBody.linearVelocity;
+
+        saveData.sceneID = SceneManager.GetActiveScene().buildIndex;
     }
 }

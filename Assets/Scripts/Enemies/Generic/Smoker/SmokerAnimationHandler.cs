@@ -3,7 +3,8 @@ using UnityEngine;
 public enum ESmokerAnimationEvent
 {
     OnSmokeSpawn,
-    OnSmokeEnd
+    OnSmokeEnd,
+    OnDeath
 }
 
 public class SmokerAnimationHandler : AnimationHandler<ESmokerAnimationEvent>
@@ -16,5 +17,10 @@ public class SmokerAnimationHandler : AnimationHandler<ESmokerAnimationEvent>
     private void OnSmokingEnded()
     {
         CallEvent(ESmokerAnimationEvent.OnSmokeEnd);
+    }
+
+    private void OnDeath()
+    {
+        CallEvent(ESmokerAnimationEvent.OnDeath);
     }
 }

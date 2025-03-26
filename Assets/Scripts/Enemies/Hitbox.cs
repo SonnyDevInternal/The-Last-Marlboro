@@ -29,7 +29,10 @@ public class Hitbox : MonoBehaviour
         if(hasOwningEnemy)
         {
             hasOwningEnemy = false;
+
             owningEnemy.UnbindOnDestroyingEnemy(OnEnemyDestroyed);
+
+            owningEnemy = null;
         }
     }
 
@@ -45,6 +48,9 @@ public class Hitbox : MonoBehaviour
 
     public void UnbindEnemy()
     {
+        if (!hasOwningEnemy)
+            return;
+
         owningEnemy.UnbindOnDestroyingEnemy(OnEnemyDestroyed);
 
         owningEnemy = null;

@@ -28,6 +28,7 @@ public abstract class Item : Interactable
     static protected int interactableLayer = 0;
     static protected int defaultLayer = 0;
     static protected int hitboxLayer = 0;
+    static protected int IgnoreRaycastLayer = 0;
 
     static protected bool hasFoundAllLayerMasks = false;
 
@@ -73,6 +74,7 @@ public abstract class Item : Interactable
             interactableLayer = LayerMask.NameToLayer("Interactable");
             defaultLayer = LayerMask.NameToLayer("Default");
             hitboxLayer = LayerMask.NameToLayer("Hitbox");
+            IgnoreRaycastLayer = LayerMask.NameToLayer("Ignore Raycast");
         }
 
         hasItemMeshRenderers = (meshRenderers != null && meshRenderers.Length > 0);

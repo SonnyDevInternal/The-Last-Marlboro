@@ -489,6 +489,11 @@ public abstract class EnemyBase : MonoBehaviour
 
     }
 
+    protected virtual void OnEnemyHealthChanged(int valueChangedBy)
+    {
+
+    }
+
     protected virtual void OnMoveAgent(Vector3 position)
     {
         if(agent.pathEndPosition != position)
@@ -538,6 +543,11 @@ public abstract class EnemyBase : MonoBehaviour
         return playerDistance;
     }
 
+    protected int GetHealth()
+    {
+        return currentHealth;
+    }
+
     public void DamageHealth(int value)
     {
         currentHealth -= value;
@@ -550,6 +560,8 @@ public abstract class EnemyBase : MonoBehaviour
 
             EnemyDied();
         }
+
+        OnEnemyHealthChanged(-value);
     }
 
     public void HealHealth(int value, bool healOverMax = false)
@@ -560,6 +572,8 @@ public abstract class EnemyBase : MonoBehaviour
         {
             currentHealth = enemySettings.enemyMaxHealth;
         }
+
+        OnEnemyHealthChanged(value);
     }
 
     public static int GetPlayerLayerMask()

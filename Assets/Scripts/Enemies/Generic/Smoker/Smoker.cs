@@ -25,27 +25,47 @@ public class Smoker : EnemyBase
     [SerializeField]
     private GameObject smokeCloudPrefab = null;
 
+    [SerializeField]
+    private UI_Bar3D healthBar = null;
+
     private float SmokeAttackDelayCurrent = 0.0f;
 
     private bool hasSmokeAttackDelay = false;
     private bool isAttacking = false;
 
+    private bool hasSmokerHealthbar = false;
+
     protected override void OnStartAgent()
     {
         smokerHandler = GetComponentInChildren<SmokerAnimationHandler>();
 
-        if( smokerHandler != null )
+        hasSmokerHealthbar = healthBar != null;
+
+        if (hasSmokerHealthbar)
+            OnEnemyHealthChanged(0);
+
+        if ( smokerHandler != null )
             smokerHandler.BindOnAnimationHandlerCalled(OnSmokerAnimationEvent);
     }
 
     protected override void OnEnemyDeath(EDeathSource source)
     {
-        if (smokerHandler != null)
-            smokerHandler.UnbindOnAnimationHandlerCalled(OnSmokerAnimationEvent);
-
         base.OnEnemyDeath(source);
 
-        animator.SetTrigger("Death");
+        if(source == EDeathSource.Scene && smokerHandler != null)
+        {
+            smokerHandler.UnbindOnAnimationHandlerCalled(OnSmokerAnimationEvent);
+
+            hasSmokerHealthbar = false;
+        }
+        else
+            animator.SetTrigger("Death");
+    }
+
+    protected override void OnEnemyHealthChanged(int valueChangedBy)
+    {
+        if (hasSmokerHealthbar)
+            healthBar.SetPercentage((float)GetHealth() / (float)enemySettings.enemyMaxHealth);
     }
 
     protected override void OnUpdateAgent()
@@ -62,6 +82,15 @@ public class Smoker : EnemyBase
             }
             else
                 SmokeAttackDelayCurrent += Time.deltaTime;
+        }
+
+        if (hasSmokerHealthbar && hasTargetingPlayer)
+        {
+            var targetRotation = Quaternion.LookRotation(TargetingPlayer.transform.position - transform.position);
+
+            var targetVec = targetRotation.eulerAngles; targetVec.z = 0;
+
+            healthBar.transform.rotation = Quaternion.Euler(targetVec);
         }
     }
 
@@ -124,6 +153,14 @@ public class Smoker : EnemyBase
                 {
                     ResetSmoker();
                 }
+
+                break;
+
+            case ESmokerAnimationEvent.OnDeath:
+                if(smokerHandler != null)
+                    smokerHandler.UnbindOnAnimationHandlerCalled(OnSmokerAnimationEvent);
+
+                Destroy(gameObject);
 
                 break;
 
