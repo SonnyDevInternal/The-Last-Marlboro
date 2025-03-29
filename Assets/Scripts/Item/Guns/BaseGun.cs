@@ -1,5 +1,3 @@
-using System;
-using Unity.VisualScripting;
 using UnityEngine;
 
 [System.Serializable]
@@ -13,6 +11,9 @@ public class BaseGun : Item
 {
     [SerializeField]
     private GameObject hitCubesPrefab = null;
+
+    [SerializeField]
+    private GameObject lightObj = null;
 
     [SerializeField]
     protected GunSettings gunSettings = new GunSettings();
@@ -94,6 +95,13 @@ public class BaseGun : Item
 
     protected override void OnPickUpItem_Implementation(GameObject storingLocation)
     {
+        if(lightObj)
+            lightObj.SetActive(false);
+    }
 
+    protected override void OnDropItem_Implementation(Vector3 dropPosition)
+    {
+        if (lightObj)
+            lightObj.SetActive(true);
     }
 }

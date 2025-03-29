@@ -23,6 +23,9 @@ public class LocalPlayer : MonoBehaviour
     [SerializeField]
     private Slider sensitivitySlider = null;
 
+    [SerializeField]
+    private float xCameraLock = 90.0f;
+
     private int ItemSlots = 4;
 
     private bool hasPlayer = false;
@@ -261,6 +264,23 @@ public class LocalPlayer : MonoBehaviour
         if (rotation != 0.0f)
         {
             this.playerCamera.transform.Rotate(rotation, 0.0f, 0.0f);
+
+            /*
+            var euler = this.playerCamera.transform.rotation.eulerAngles;
+
+            if (euler.x < -xCameraLock)
+            {
+                euler.x = -xCameraLock;
+
+                this.playerCamera.transform.rotation = Quaternion.Euler(euler);
+            }
+            else
+                if (euler.x > xCameraLock)
+            {
+                euler.x = xCameraLock;
+
+                this.playerCamera.transform.rotation = Quaternion.Euler(euler);
+            }*/
         }
 
         if (translation != 0.0f)

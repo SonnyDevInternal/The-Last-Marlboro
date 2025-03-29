@@ -2645,6 +2645,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4188900817353870836, guid: 3520d790d61d4c54b94d520e5b6ce3b5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 22.366663
+      objectReference: {fileID: 0}
     - target: {fileID: 6125995796194503489, guid: 3520d790d61d4c54b94d520e5b6ce3b5, type: 3}
       propertyPath: m_Name
       value: Freakster_Enemy (4)
@@ -2652,6 +2656,26 @@ PrefabInstance:
     - target: {fileID: 6125995796194503489, guid: 3520d790d61d4c54b94d520e5b6ce3b5, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6127811296215184300, guid: 3520d790d61d4c54b94d520e5b6ce3b5, type: 3}
+      propertyPath: m_Range
+      value: 11.82
+      objectReference: {fileID: 0}
+    - target: {fileID: 6127811296215184300, guid: 3520d790d61d4c54b94d520e5b6ce3b5, type: 3}
+      propertyPath: m_Color.b
+      value: 0.28773582
+      objectReference: {fileID: 0}
+    - target: {fileID: 6127811296215184300, guid: 3520d790d61d4c54b94d520e5b6ce3b5, type: 3}
+      propertyPath: m_Color.g
+      value: 0.49809197
+      objectReference: {fileID: 0}
+    - target: {fileID: 6127811296215184300, guid: 3520d790d61d4c54b94d520e5b6ce3b5, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6127811296215184300, guid: 3520d790d61d4c54b94d520e5b6ce3b5, type: 3}
+      propertyPath: m_Intensity
+      value: 52.81
       objectReference: {fileID: 0}
     - target: {fileID: 7676633362873032941, guid: 3520d790d61d4c54b94d520e5b6ce3b5, type: 3}
       propertyPath: enemySettings.canPatrol
@@ -2663,6 +2687,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7676633362873032941, guid: 3520d790d61d4c54b94d520e5b6ce3b5, type: 3}
       propertyPath: enemySettings.canAttackPlayer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7676633362873032941, guid: 3520d790d61d4c54b94d520e5b6ce3b5, type: 3}
+      propertyPath: enemySettings.useBasicHitboxes
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7676633362873032941, guid: 3520d790d61d4c54b94d520e5b6ce3b5, type: 3}
