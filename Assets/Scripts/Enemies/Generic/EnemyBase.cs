@@ -416,6 +416,8 @@ public abstract class EnemyBase : MonoBehaviour
 
     private void EnemyDied()
     {
+        agent.isStopped = true;
+
         isDead = true;
 
         OnEnemyDeath(EDeathSource.Player);
