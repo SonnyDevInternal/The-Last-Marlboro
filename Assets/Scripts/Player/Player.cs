@@ -3,6 +3,14 @@ using UnityEngine;
 using System.IO;
 using Unity.VisualScripting;
 using UnityEngine.SceneManagement;
+using JetBrains.Annotations;
+
+public enum PlayerCharacterID
+{
+    None,
+    Normal, 
+    Heavy
+}
 
 public struct PlayerSaveData
 {
@@ -10,7 +18,7 @@ public struct PlayerSaveData
     public Quaternion rotation;
     public Vector3 velocity;
     public int sceneID;
-    public int characterID;
+    public PlayerCharacterID characterID;
 
     public float stamina;
     public bool isAlive;
@@ -130,6 +138,7 @@ public class Player : MonoBehaviour
     protected float timeSinceDamaged_Current = 0.0f;
     protected float timeSinceDamaged = 2.0f;
 
+    private PlayerCharacterID characterID = PlayerCharacterID.None;
     public float interactDistance = 10.0f;
 
     public delegate void OnUpdatePlayer(Player _this);
@@ -520,6 +529,15 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void SetCharacterID(PlayerCharacterID ID)
+    {
+        this.characterID = ID;
+
+#if DEBUG
+        Debug.Log("Set Character to ID: " + ID.ToString());
+#endif
+    }
+
     public void TryUseActiveItem()
     {
         if (playerInventory.HasActiveItem())
@@ -602,14 +620,19 @@ public class Player : MonoBehaviour
         currentStamina = stamina;
     }
 
-    void SavePlayerData()
+    void SavePlayerData(bool reachedCheckPoint)
     {
-        saveData.isAlive = isAlive;
-        saveData.position = transform.position;
-        saveData.stamina = currentStamina;
-        saveData.rotation = transform.rotation;
-        saveData.velocity = playerRigidBody.linearVelocity;
+        if(reachedCheckPoint)
+        {
+            saveData.isAlive = isAlive;
+            saveData.position = transform.position;
+            saveData.rotation = transform.rotation;
+            saveData.velocity = playerRigidBody.linearVelocity;
 
-        saveData.sceneID = SceneManager.GetActiveScene().buildIndex;
+            saveData.sceneID = SceneManager.GetActiveScene().buildIndex;
+        }
+
+        saveData.stamina = currentStamina;
+        saveData.characterID = characterID;
     }
 }

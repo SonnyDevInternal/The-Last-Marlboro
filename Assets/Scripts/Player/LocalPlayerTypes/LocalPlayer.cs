@@ -263,24 +263,18 @@ public class LocalPlayer : MonoBehaviour
 
         if (rotation != 0.0f)
         {
-            this.playerCamera.transform.Rotate(rotation, 0.0f, 0.0f);
+            var camTransform = this.playerCamera.transform;
 
-            /*
-            var euler = this.playerCamera.transform.rotation.eulerAngles;
+            Vector3 euler = camTransform.localEulerAngles;
 
-            if (euler.x < -xCameraLock)
-            {
-                euler.x = -xCameraLock;
+            float newXRotation = euler.x + rotation;
 
-                this.playerCamera.transform.rotation = Quaternion.Euler(euler);
-            }
-            else
-                if (euler.x > xCameraLock)
-            {
-                euler.x = xCameraLock;
+            if (newXRotation > 180.0f)
+                newXRotation -= 360.0f;
 
-                this.playerCamera.transform.rotation = Quaternion.Euler(euler);
-            }*/
+            newXRotation = Mathf.Clamp(newXRotation, -xCameraLock, xCameraLock);
+
+            camTransform.localRotation = Quaternion.Euler(newXRotation, euler.y, euler.z);
         }
 
         if (translation != 0.0f)
