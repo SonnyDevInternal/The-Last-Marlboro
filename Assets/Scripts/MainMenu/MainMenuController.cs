@@ -4,24 +4,42 @@ using UnityEngine.UI;
 public class MainMenuController : MonoBehaviour
 {
     [SerializeField]
-    Button startGameBtn = null;
+    private GameObject savePrefab = null;
 
     [SerializeField]
-    Button optionsBtn = null;
+    private Button startGameBtn = null;
 
     [SerializeField]
-    Button CreditsBtn = null;
+    private Button optionsBtn = null;
 
     [SerializeField]
-    Button quitBtn = null;
+    private Button CreditsBtn = null;
+
+    [SerializeField]
+    private Button quitBtn = null;
+
+    private void HideMainButtons(bool value)
+    {
+        bool value_ = !value;
+
+        startGameBtn.gameObject.SetActive(value_);
+        optionsBtn.gameObject.SetActive(value_);
+        CreditsBtn.gameObject.SetActive(value_);
+        quitBtn.gameObject.SetActive(value_);
+    }
 
     void Start()
     {
-        
+        startGameBtn.onClick.AddListener(OnPressedStartGame);
     }
 
-    void Update()
+    private void OnDestroy()
     {
-        
+        startGameBtn.onClick.RemoveAllListeners();
+    }
+
+    void OnPressedStartGame()
+    {
+        HideMainButtons(true);
     }
 }
