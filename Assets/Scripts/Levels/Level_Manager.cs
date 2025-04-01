@@ -1,8 +1,18 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+enum EGameLevel
+{
+    MainMenu,
+    Level1,
+    Level2
+}
+
 public class Level_Manager : MonoBehaviour
 {
+    static public Level_Manager instance = null;
+    static public bool hasInstance = false;
+
     protected Player player = null;
 
     protected QuestSystem questSystem = null;
@@ -12,15 +22,24 @@ public class Level_Manager : MonoBehaviour
 
     private void Start()
     {
+        if(!hasInstance)
+        {
+            instance = this;
+        }
+
         questSystem = GetComponent<QuestSystem>();
 
-        OnStartLevelManager();
-
         BindPlayer(FindFirstObjectByType<Player>(FindObjectsInactive.Include));
+
+        OnStartLevelManager();
     }
 
     private void OnDestroy()
     {
+        hasInstance = false;
+
+        instance = null;
+
         UnbindPlayer();
 
         OnDestroyLevelManager();
@@ -38,6 +57,11 @@ public class Level_Manager : MonoBehaviour
         UnbindPlayer();
 
         OnPlayerLiveStateChangedImplementation(_this, alive);
+    }
+
+    protected void SwitchLevel()
+    {
+
     }
 
     protected void SaveData()
@@ -78,6 +102,10 @@ public class Level_Manager : MonoBehaviour
 
         if(hasPlayer)
         {
+
+#if DEBUG 
+            Debug.Log("Bounded Player to LevelManager!");
+#endif
             player.BindOnChangeLivingState(OnPlayerLiveStateChanged);
             player.BindOnDestroy(OnPlayerDestroyed);
         }
@@ -87,11 +115,24 @@ public class Level_Manager : MonoBehaviour
     {
         if(hasPlayer)
         {
+#if DEBUG
+            Debug.Log("Unbounded Player to LevelManager!");
+#endif
             player.UnbindOnChangeLivingState(OnPlayerLiveStateChanged);
             player.UnbindOnDestroy(OnPlayerDestroyed);
         }
 
         hasPlayer = false;
         player = null;
+    }
+
+    public bool HasPlayer()
+    {
+        return hasPlayer;
+    }
+
+    public Player GetPlayer()
+    {
+        return player;
     }
 }

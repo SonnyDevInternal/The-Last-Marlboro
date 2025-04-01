@@ -39,8 +39,6 @@ public class Level1_Manager : Level_Manager
 
     protected override void OnStartLevelManager()
     {
-        base.OnStartLevelManager();
-
         normalGun.BindOnInteracted(OnInteractEvent);
         heavyGun.BindOnInteracted(OnInteractEvent);
 

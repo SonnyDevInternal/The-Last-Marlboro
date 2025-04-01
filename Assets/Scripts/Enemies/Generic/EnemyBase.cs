@@ -203,11 +203,6 @@ public abstract class EnemyBase : MonoBehaviour
             return;
         }
 
-        playerDistance = GetPlayerDistanceInternal();
-        isSeeingPlayer = IsPlayerVisible();
-
-        UpdateAnimations();
-
         if (!triedFindingPlayer && !hasTargetingPlayer)
         {
             triedFindingPlayer = true;
@@ -225,15 +220,34 @@ public abstract class EnemyBase : MonoBehaviour
                 findPlayerTime_Current += Time.deltaTime;
         }
 
-        if (hasTargetingPlayer && enemySettings.shouldLookAtPlayer)
+        if(hasTargetingPlayer)
         {
-            var playerPos = TargetingPlayer.transform.position;
+            if (!triedFindingPlayer)
+            {
+                triedFindingPlayer = true;
 
-            var currentVelocity = agent.velocity.magnitude;
-
-            if (currentVelocity <= 0.1f)
-                RotateToPlayer(playerPos);
+                hasTargetingPlayer = (TargetingPlayer != null);
+            }
         }
+
+        if (hasTargetingPlayer)
+        {
+
+            if(enemySettings.shouldLookAtPlayer)
+            {
+                var playerPos = TargetingPlayer.transform.position;
+
+                var currentVelocity = agent.velocity.magnitude;
+
+                if (currentVelocity <= 0.1f)
+                    RotateToPlayer(playerPos);
+            }
+        }
+
+        playerDistance = GetPlayerDistanceInternal();
+        isSeeingPlayer = IsPlayerVisible();
+
+        UpdateAnimations();
 
 
 #if DEBUG

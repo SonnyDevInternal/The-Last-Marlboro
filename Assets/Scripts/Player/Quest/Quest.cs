@@ -56,6 +56,8 @@ public class Quest : MonoBehaviour
 
     private bool isUiActive = false;
 
+    private bool hasBeenIntialized = false;
+
     [SerializeField]
     protected QuestSettings questSettings = new QuestSettings();
 
@@ -68,14 +70,9 @@ public class Quest : MonoBehaviour
 
     private void Start()
     {
-        currentUITransform = GetComponent<RectTransform>();
-
-        sceneID = SceneManager.GetActiveScene().buildIndex;
-
-        canvasRenderer.cull = true;
-
-        allQuests.Add(questID, this);
+        IntializeQuest();
     }
+
     private void SendQuestEvent(EQuestEvent Event)
     {
         onQuestEvent.Invoke(this, Event);
@@ -100,6 +97,22 @@ public class Quest : MonoBehaviour
         progress = 0;
 
         SendQuestEvent(EQuestEvent.OnStartQuest);
+    }
+
+    public void IntializeQuest()
+    {
+        if (hasBeenIntialized)
+            return;
+
+        hasBeenIntialized = true;
+
+        currentUITransform = GetComponent<RectTransform>();
+
+        sceneID = SceneManager.GetActiveScene().buildIndex;
+
+        canvasRenderer.cull = true;
+
+        allQuests.Add(questID, this);
     }
 
     public void EndQuest()
@@ -134,6 +147,11 @@ public class Quest : MonoBehaviour
 
         progress = data.progress;
         questSettings = data.settings;
+    }
+
+    public bool HasBeenIntialized()
+    {
+        return hasBeenIntialized;
     }
 
     public QuestSaveData? SaveQuest()

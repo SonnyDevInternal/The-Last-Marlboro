@@ -40,7 +40,7 @@ public class QuestSystem : MonoBehaviour
 
     private void AddQuestToUI(Quest quest)
     {
-        var systemUITransform = mainQuestUI.transform;
+        var systemUITransform = mainQuestUI.GetComponent<RectTransform>();
 
         quest.SetUIActive(true);
 
@@ -90,6 +90,9 @@ public class QuestSystem : MonoBehaviour
 #endif
             return;
         }
+
+        if (!quest.HasBeenIntialized())
+            quest.IntializeQuest();
 
         quest.BindOnQuestEvent(OnQuestEvent);
 
