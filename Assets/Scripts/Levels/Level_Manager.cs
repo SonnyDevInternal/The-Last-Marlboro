@@ -12,13 +12,16 @@ public class Level_Manager : MonoBehaviour
 {
     static public Level_Manager instance = null;
     static public bool hasInstance = false;
-
+    
     protected Player player = null;
 
     protected QuestSystem questSystem = null;
     protected int questsCount = 0;
 
     protected bool hasPlayer = false;
+
+    [SerializeField]
+    private bool canLoadSaveFiles = true;
 
     private void Start()
     {

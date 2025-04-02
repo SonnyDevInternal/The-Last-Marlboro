@@ -1,25 +1,125 @@
+using System.IO;
+using System.Linq;
 using UnityEngine;
 
 public struct SaveFileData
 {
     public PlayerSaveData playerSaveData;
     public QuestSaveData[] questSaveDatas;
+
+    public string GetSaveData()
+    {
+        return JsonUtility.ToJson(this);
+    }
+
+    public bool SetSaveData(string saveData)
+    {
+        try
+        {
+            var save = JsonUtility.FromJson<SaveFileData>(saveData);
+
+            playerSaveData = save.playerSaveData;
+            questSaveDatas = save.questSaveDatas;
+
+            return true;
+        }
+        catch (System.Exception)
+        {
+            Debug.LogError("Failed to set Save Data (Corrupted?)");
+        }
+        return false;
+    }
 }
 
 public class SaveSystem : MonoBehaviour
 {
-    static string currentPath = "";
-    static string currentFileName = "";
+    public static SaveFileData saveFileData = new SaveFileData();
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private const string fileType = "tlm";
+
+    [SerializeField]
+    private string currentPath = "";
+
+    public string[] GetSaveFileNames(string path)
     {
-        
+        if (!path.Contains(':'))
+            path = Application.persistentDataPath + "/" + path;
+
+        if (!Directory.Exists(path))
+            Directory.CreateDirectory(path);
+
+        return Directory.GetFiles(path)
+            .Where(file => file.EndsWith($".{fileType}"))
+            .Select(Path.GetFileName)
+            .ToArray();
     }
 
-    // Update is called once per frame
-    void Update()
+
+    public SaveFileData? GetSaveFileData(string fileName, string path)
     {
-        
+        if (!path.Contains(':'))
+            path = Application.persistentDataPath + "/" + path;
+
+        try
+        {
+            string fullPath = fileName.Contains(fileType) ? path + fileName : path + fileName + $".{fileType}";
+
+            if (!File.Exists(fullPath)) return null;
+
+            string data = File.ReadAllText(fullPath);
+            SaveFileData saveFileOut = JsonUtility.FromJson<SaveFileData>(data);
+
+            saveFileData = saveFileOut;
+            return saveFileOut;
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"Failed to load save: {ex.Message}");
+        }
+        return null;
+    }
+
+
+    public bool SetSaveFileData(string fileName, string path)
+    {
+        if (!path.Contains(':'))
+            path = Application.persistentDataPath + "/" + path;
+
+        try
+        {
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
+            string fullPath = fileName.Contains(fileType) ? path + fileName : path + fileName + $".{fileType}";
+
+            File.WriteAllText(fullPath, saveFileData.GetSaveData());
+
+            return true;
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"Failed to save: {ex.Message}");
+        }
+        return false;
+    }
+
+    public string[] GetSaveFileNames()
+    {
+         return GetSaveFileNames(currentPath);
+    }
+
+    public SaveFileData? GetSaveFileData(string fileName)
+    {
+        return GetSaveFileData(fileName, currentPath);
+    }
+
+    public bool SetSaveFileData(string fileName)
+    {
+        return SetSaveFileData(fileName, currentPath);
+    }
+
+    public SaveFileData GetLoadedSaveFileData()
+    {
+        return saveFileData;
     }
 }

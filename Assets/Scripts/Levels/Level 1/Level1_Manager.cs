@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEditor.Overlays;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Level1_Manager : Level_Manager
 {
@@ -31,6 +32,8 @@ public class Level1_Manager : Level_Manager
     [SerializeField]
     private Quest exitQuest = null;
 
+    private LevelLoader loader = null;
+
     private List<EnemyBase> levelEnemies = new List<EnemyBase>();
 
     private int enemiesKilled = 0;
@@ -39,6 +42,8 @@ public class Level1_Manager : Level_Manager
 
     protected override void OnStartLevelManager()
     {
+        loader = GetComponent<LevelLoader>();
+
         normalGun.BindOnInteracted(OnInteractEvent);
         heavyGun.BindOnInteracted(OnInteractEvent);
 
@@ -142,14 +147,23 @@ public class Level1_Manager : Level_Manager
 
     }
 
+    private void OnTunnelExit()
+    {
+        loader.TransitionToNextLevel("Scenes/Level2");
+    }
+
     private void OnColliderEnter_Tunnel(ColliderHandler _this, EColliderEvent Event)
     {
-        if (!hasUnlockedExit)
+        if (!hasUnlockedExit || _this.GetCollidingObject().gameObject != player.gameObject)
             return;
+
+        this.exitLevelCollider.UnbindOnTriggerColliderEvent(OnColliderEnter_Tunnel);
 
 #if DEBUG
         Debug.Log("Exited Level");
 #endif
+
+        OnTunnelExit();
     }
 
     private string GetEnemyQuestText()

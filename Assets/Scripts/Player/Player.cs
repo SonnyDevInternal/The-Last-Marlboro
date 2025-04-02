@@ -22,24 +22,7 @@ public struct PlayerSaveData
 
     public float stamina;
     public bool isAlive;
-
-    string GetSaveData()
-    {
-        return JsonUtility.ToJson(this);
-    }
-
-    bool LoadSaveData(string jsonSaveData)
-    {
-        try
-        {
-            JsonUtility.FromJsonOverwrite(jsonSaveData, this);
-            return true;
-        }
-        catch (System.Exception)
-        {
-            return false;
-        }
-    }
+    public bool validSave;
 }
 
 public class Player : MonoBehaviour

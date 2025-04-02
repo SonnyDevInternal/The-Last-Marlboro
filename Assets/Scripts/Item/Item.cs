@@ -1,5 +1,12 @@
 using UnityEngine;
 
+public enum EItemID
+{
+    None = 0,
+    FastGunBasic,
+    HeavyGunBasic
+}
+
 public enum EItemEvent
 {
     OnDestroyed,
@@ -8,6 +15,23 @@ public enum EItemEvent
     OnPickedUp,
     OnActivated,
     OnDeactivated
+}
+
+public struct ItemSaveData
+{
+    public EItemID itemID;
+    public string data;
+
+    public void SetDataFromItem(Item item)
+    {
+        itemID = item.GetItemID();
+        data = item.OnGetItemSave();
+    }
+
+    public void SetDataToItem(Item item)
+    {
+        item.OnSetItemSave(data);
+    }
 }
 
 [System.Serializable]
@@ -34,6 +58,8 @@ public abstract class Item : Interactable
 
     [SerializeField, Tooltip("The Name of this Item. (Will be used for UI Later!)")]
     private string itemName = "";
+
+    private EItemID itemID = EItemID.FastGunBasic;
 
     [SerializeField, Tooltip("The Mesh Renderers that belong to this Item. (Important for Toggeling Visibility!)")]
     private MeshRenderer[] meshRenderers = null;
@@ -137,6 +163,18 @@ public abstract class Item : Interactable
     protected virtual void OnItemChangedParent(Transform newParent, bool worldPosStays)
     {
         transform.SetParent(newParent, worldPosStays);
+    }
+
+    //Get the Json Save Values that gets saved for the Item
+    public virtual string OnGetItemSave()
+    {
+        return "";
+    }
+    
+    //Set the Json Values to the Item back
+    public virtual void OnSetItemSave(string saveData)
+    {
+
     }
 
     protected void SetCollidersActive(bool active)
@@ -293,6 +331,11 @@ public abstract class Item : Interactable
     public string GetItemName()
     {
         return itemName;
+    }
+
+    public EItemID GetItemID()
+    {
+        return itemID;
     }
 
     public Player GetOwningPlayer()

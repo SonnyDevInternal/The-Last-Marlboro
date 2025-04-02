@@ -10,6 +10,12 @@ public struct InventorySettings
     public bool shouldDropItemsOnDestroy;
 }
 
+public struct InventorySaveData
+{
+    public InventorySettings settings;
+    public ItemSaveData[] items;
+}
+
 public class Inventory : MonoBehaviour
 {
     private Player player = null;
@@ -162,6 +168,13 @@ public class Inventory : MonoBehaviour
                 OnToggleItem(item);
             }
         }
+    }
+
+    public InventorySaveData GetSaveData()
+    {
+        InventorySaveData saveData = new InventorySaveData();
+
+        saveData.
     }
 
     public Item GetActiveItem()
