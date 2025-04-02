@@ -157,6 +157,11 @@ public class Inventory : MonoBehaviour
         OnActivateItem(item, active);
     }
 
+    public void SaveInventory()
+    {
+
+    }
+
     public void ToggleItemOnIndex(int index)
     {
         if (index >= 0 && index < itemHolders.Count)
@@ -174,7 +179,9 @@ public class Inventory : MonoBehaviour
     {
         InventorySaveData saveData = new InventorySaveData();
 
-        saveData.
+        //saveData.
+
+        return saveData;
     }
 
     public Item GetActiveItem()
