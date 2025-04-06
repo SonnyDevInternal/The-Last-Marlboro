@@ -1,4 +1,5 @@
 using UnityEngine;
+using static UnityEditor.Progress;
 
 public enum EItemID
 {
@@ -17,12 +18,18 @@ public enum EItemEvent
     OnDeactivated
 }
 
+[System.Serializable]
 public struct ItemSaveData
 {
-    public EItemID itemID;
-    public string data;
+    [SerializeField]
+    //The Base Item Identifier this item is based on
+    private EItemID itemID;
 
-    public void SetDataFromItem(Item item)
+    [SerializeField]
+    //Data that Modifies the Item in an Certain way
+    private string data;
+
+    public ItemSaveData(Item item)
     {
         itemID = item.GetItemID();
         data = item.OnGetItemSave();
@@ -30,7 +37,13 @@ public struct ItemSaveData
 
     public void SetDataToItem(Item item)
     {
+        item.SetItemID(this.itemID);
         item.OnSetItemSave(data);
+    }
+
+    public EItemID GetItemID()
+    {
+        return itemID;
     }
 }
 
@@ -59,6 +72,7 @@ public abstract class Item : Interactable
     [SerializeField, Tooltip("The Name of this Item. (Will be used for UI Later!)")]
     private string itemName = "";
 
+    [SerializeField, Tooltip("The Base ID of this Item, required for Save State System")]
     private EItemID itemID = EItemID.FastGunBasic;
 
     [SerializeField, Tooltip("The Mesh Renderers that belong to this Item. (Important for Toggeling Visibility!)")]
@@ -321,6 +335,11 @@ public abstract class Item : Interactable
     public void ToggleItem()
     {
         UpdateItemValues(!isActive);
+    }
+
+    public void SetItemID(EItemID ID)
+    {
+        this.itemID = ID;
     }
 
     public bool IsItemActive()

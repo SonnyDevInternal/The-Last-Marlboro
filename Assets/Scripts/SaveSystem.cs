@@ -2,9 +2,11 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 
+[System.Serializable]
 public struct SaveFileData
 {
     public PlayerSaveData playerSaveData;
+    public InventorySaveData inventorySaveData;
     public QuestSaveData[] questSaveDatas;
 
     public string GetSaveData()
@@ -33,7 +35,11 @@ public struct SaveFileData
 
 public class SaveSystem : MonoBehaviour
 {
+    //Overwrite with Data
     public static SaveFileData saveFileData = new SaveFileData();
+    public static string currentFileName = "File1";
+
+    public static bool hasTargetFile = true;
 
     private const string fileType = "tlm";
 
@@ -60,6 +66,8 @@ public class SaveSystem : MonoBehaviour
         if (!path.Contains(':'))
             path = Application.persistentDataPath + "/" + path;
 
+        hasTargetFile = false;
+
         try
         {
             string fullPath = fileName.Contains(fileType) ? path + fileName : path + fileName + $".{fileType}";
@@ -69,7 +77,15 @@ public class SaveSystem : MonoBehaviour
             string data = File.ReadAllText(fullPath);
             SaveFileData saveFileOut = JsonUtility.FromJson<SaveFileData>(data);
 
+#if DEBUG
+            Debug.Log("Loaded from File: " + fullPath);
+#endif
+
             saveFileData = saveFileOut;
+
+            hasTargetFile = true;
+            currentFileName = fileName;
+
             return saveFileOut;
         }
         catch (System.Exception ex)
@@ -85,6 +101,8 @@ public class SaveSystem : MonoBehaviour
         if (!path.Contains(':'))
             path = Application.persistentDataPath + "/" + path;
 
+        hasTargetFile = false;
+
         try
         {
             if (!Directory.Exists(path))
@@ -93,6 +111,13 @@ public class SaveSystem : MonoBehaviour
             string fullPath = fileName.Contains(fileType) ? path + fileName : path + fileName + $".{fileType}";
 
             File.WriteAllText(fullPath, saveFileData.GetSaveData());
+
+#if DEBUG
+            Debug.Log("Saved to File: " + fullPath);
+#endif
+
+            hasTargetFile = true; 
+            currentFileName = fileName;
 
             return true;
         }
@@ -116,6 +141,28 @@ public class SaveSystem : MonoBehaviour
     public bool SetSaveFileData(string fileName)
     {
         return SetSaveFileData(fileName, currentPath);
+    }
+
+    public void SetTargetFileName(string fileName)
+    {
+        hasTargetFile = true;
+        currentFileName = fileName;
+    }
+
+    public SaveFileData? GetSaveFileData()
+    {
+        if(hasTargetFile)
+            return GetSaveFileData(currentFileName, currentPath);
+
+        return null;
+    }
+
+    public bool SetSaveFileData()
+    {
+        if (hasTargetFile)
+            return SetSaveFileData(currentFileName);
+
+        return false;
     }
 
     public SaveFileData GetLoadedSaveFileData()

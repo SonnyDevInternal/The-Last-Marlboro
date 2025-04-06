@@ -12,6 +12,7 @@ public enum PlayerCharacterID
     Heavy
 }
 
+[System.Serializable]
 public struct PlayerSaveData
 {
     public Vector3 position;
@@ -21,8 +22,9 @@ public struct PlayerSaveData
     public PlayerCharacterID characterID;
 
     public float stamina;
-    public bool isAlive;
-    public bool validSave;
+    public float maxStamina;
+
+    public bool checkpointData;
 }
 
 public class Player : MonoBehaviour
@@ -56,7 +58,7 @@ public class Player : MonoBehaviour
         GameEnded
     }
 
-    static PlayerSaveData saveData = new PlayerSaveData();
+    static public PlayerSaveData saveData = new PlayerSaveData();
 
     protected Inventory playerInventory = null;
 
@@ -124,6 +126,8 @@ public class Player : MonoBehaviour
     private PlayerCharacterID characterID = PlayerCharacterID.None;
     public float interactDistance = 10.0f;
 
+    private bool hasIntialized = false;
+
     public delegate void OnUpdatePlayer(Player _this);
     public delegate void OnDestroyPlayer(Player _this, bool ByScene);
     public delegate PlayerMovement OnMovePlayerHook(Player _this, PlayerMovement originalMovement);
@@ -147,11 +151,6 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        playerRigidBody = GetComponent<Rigidbody>();
-        playerCapsuleCollider = GetComponent<CapsuleCollider>();
-
-        playerInventory = GetComponent<Inventory>();
-
         Initialize();
     }
 
@@ -542,8 +541,18 @@ public class Player : MonoBehaviour
     }
 
 
-    private void Initialize()
+    public void Initialize()
     {
+        if (hasIntialized)
+            return;
+
+        hasIntialized = true;
+
+        playerRigidBody = GetComponent<Rigidbody>();
+        playerCapsuleCollider = GetComponent<CapsuleCollider>();
+
+        playerInventory = GetComponent<Inventory>();
+
         IntializePlayer();
     }
 
@@ -566,6 +575,11 @@ public class Player : MonoBehaviour
     public bool IsGrounded()
     {
         return isGrounded;
+    }
+
+    public bool HasBeenIntialized()
+    {
+        return hasIntialized;
     }
 
     public float GetStamina()
@@ -603,11 +617,10 @@ public class Player : MonoBehaviour
         currentStamina = stamina;
     }
 
-    void SavePlayerData(bool reachedCheckPoint)
+    public void SavePlayerData(bool reachedCheckPoint)
     {
         if(reachedCheckPoint)
         {
-            saveData.isAlive = isAlive;
             saveData.position = transform.position;
             saveData.rotation = transform.rotation;
             saveData.velocity = playerRigidBody.linearVelocity;
@@ -616,6 +629,26 @@ public class Player : MonoBehaviour
         }
 
         saveData.stamina = currentStamina;
+        saveData.maxStamina = maxStamina;
+
         saveData.characterID = characterID;
+
+        saveData.checkpointData = reachedCheckPoint;
+    }
+
+    public void LoadPlayerData(PlayerSaveData saveData)
+    {
+        characterID = saveData.characterID;
+
+        maxStamina = saveData.maxStamina;
+        currentStamina = saveData.stamina;
+
+        if (saveData.checkpointData)
+        {
+            playerRigidBody.position = saveData.position;
+            playerRigidBody.rotation = saveData.rotation;
+
+            playerRigidBody.linearVelocity = saveData.velocity;
+        }
     }
 }

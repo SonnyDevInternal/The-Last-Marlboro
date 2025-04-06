@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using UnityEngine;
 using TMPro;
+using System.Linq;
 
 public enum EQuestEvent
 {
@@ -16,8 +17,10 @@ public enum EQuestEvent
 public struct QuestSettings
 {
     public bool canBeSaved;
+    public bool canBeDisplayed;
 }
 
+[System.Serializable]
 public struct QuestSaveData
 {
     public int sceneID;
@@ -135,6 +138,9 @@ public class Quest : MonoBehaviour
 
     public void SetUIActive(bool active)
     {
+        if (active && !questSettings.canBeDisplayed)
+            return;
+
         this.isUiActive = active;
 
         canvasRenderer.cull = !active;
@@ -186,6 +192,11 @@ public class Quest : MonoBehaviour
         return isUiActive;
     }
 
+    public bool CanUiBeDisplayed()
+    {
+        return questSettings.canBeDisplayed;
+    }
+
     public RectTransform GetUITransform()
     {
         return currentUITransform;
@@ -197,5 +208,10 @@ public class Quest : MonoBehaviour
             return quest;
 
         return null;
+    }
+
+    static public Quest[] AllQuests()
+    {
+        return allQuests.Values.ToArray();
     }
 }

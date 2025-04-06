@@ -61,7 +61,7 @@ public class QuestSystem : MonoBehaviour
         {
             var quest = pair.Value;
 
-            if (!quest.IsUIActive())
+            if (!quest.IsUIActive() || !quest.CanUiBeDisplayed())
                 continue;
 
             var uiTransform = quest.GetUITransform();
@@ -122,5 +122,40 @@ public class QuestSystem : MonoBehaviour
             return quest;
 
         return null;
+    }
+
+    public QuestSaveData[] GetQuestSaveDatas()
+    {
+        var allQuests = Quest.AllQuests();
+
+        List< QuestSaveData > questsSave = new List< QuestSaveData >();
+
+        for (int i = 0; i < allQuests.Length; i++)
+        {
+            var saveData = allQuests[i].SaveQuest();
+
+            if (saveData.HasValue)
+                questsSave.Add(saveData.Value);
+        }
+
+        return questsSave.ToArray();
+    }
+
+    public void LoadSaveDatas(QuestSaveData[] questSaveDatas)
+    {
+        var sceneIDCur = SceneManager.GetActiveScene().buildIndex;
+
+        for (int i = 0; i < questSaveDatas.Length; i++)
+        {
+            if (questSaveDatas[i].sceneID != sceneIDCur)
+                continue;
+
+            var quest = Quest.FindQuest(questSaveDatas[i].questID);
+
+            if(quest != null )
+            {
+                quest.LoadSaveData(questSaveDatas[i]);
+            }
+        }
     }
 }

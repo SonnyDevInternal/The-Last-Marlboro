@@ -1,24 +1,29 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-enum EGameLevel
-{
-    MainMenu,
-    Level1,
-    Level2
-}
-
 public class Level_Manager : MonoBehaviour
 {
     static public Level_Manager instance = null;
     static public bool hasInstance = false;
-    
+
+    private LevelLoader loader = null;
+
+    protected SaveSystem saveSystem = null;
+
     protected Player player = null;
 
     protected QuestSystem questSystem = null;
     protected int questsCount = 0;
 
     protected bool hasPlayer = false;
+
+#if DEBUG
+    [SerializeField]
+    protected bool DEBUG_TriggerSave = false;
+
+    [SerializeField]
+    protected bool DEBUG_TriggerLoad = false;
+#endif
 
     [SerializeField]
     private bool canLoadSaveFiles = true;
@@ -27,12 +32,21 @@ public class Level_Manager : MonoBehaviour
     {
         if(!hasInstance)
         {
+            hasInstance = true;
+
             instance = this;
         }
+
+        loader = GetComponent<LevelLoader>();
+
+        saveSystem = GetComponent<SaveSystem>();
 
         questSystem = GetComponent<QuestSystem>();
 
         BindPlayer(FindFirstObjectByType<Player>(FindObjectsInactive.Include));
+
+        if(canLoadSaveFiles)
+            LoadData();
 
         OnStartLevelManager();
     }
@@ -48,6 +62,25 @@ public class Level_Manager : MonoBehaviour
         OnDestroyLevelManager();
     }
 
+#if DEBUG
+    private void Update()
+    {
+        if(DEBUG_TriggerSave)
+        {
+            DEBUG_TriggerSave = false;
+
+            SaveData();
+        }
+
+        if(DEBUG_TriggerLoad)
+        {
+            DEBUG_TriggerLoad = false;
+
+            LoadData();
+        }
+    }
+
+#endif
     private void OnPlayerDestroyed(Player _this, bool byScene)
     {
         UnbindPlayer();
@@ -62,19 +95,39 @@ public class Level_Manager : MonoBehaviour
         OnPlayerLiveStateChangedImplementation(_this, alive);
     }
 
-    protected void SwitchLevel()
-    {
-
-    }
 
     protected void SaveData()
     {
+        player.SavePlayerData(false);
 
+        SaveSystem.saveFileData.playerSaveData = Player.saveData;
+        SaveSystem.saveFileData.inventorySaveData = player.GetInventory().GetSaveData();
+        SaveSystem.saveFileData.questSaveDatas = questSystem.GetQuestSaveDatas();
+
+        saveSystem.SetSaveFileData();
     }
 
     protected void LoadData()
     {
+        var saveData = saveSystem.GetSaveFileData();
 
+        if (saveData.HasValue)
+        {
+            var save_ = saveData.Value;
+
+            player.LoadPlayerData(save_.playerSaveData);
+
+            player.GetInventory().LoadSaveData(save_.inventorySaveData);
+
+            questSystem.LoadSaveDatas(save_.questSaveDatas);
+        }
+    }
+
+    protected void SwitchLevel(EGameLevel level)
+    {
+        SaveData();
+
+        loader.TransitionToNextLevel(level);
     }
 
     protected virtual void OnPlayerDestroyedImplementation(Player _this, bool byScene)
@@ -99,6 +152,9 @@ public class Level_Manager : MonoBehaviour
 
     public void BindPlayer(Player player)
     {
+        if(player.HasBeenIntialized())
+            player.Initialize();
+
         this.player = player;
 
         hasPlayer = (player != null);

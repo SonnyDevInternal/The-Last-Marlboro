@@ -10,6 +10,7 @@ public struct InventorySettings
     public bool shouldDropItemsOnDestroy;
 }
 
+[System.Serializable]
 public struct InventorySaveData
 {
     public InventorySettings settings;
@@ -18,6 +19,9 @@ public struct InventorySaveData
 
 public class Inventory : MonoBehaviour
 {
+    [SerializeField]
+    private ItemLoader loader = null;
+
     private Player player = null;
 
     private List<Item> itemHolders = new List<Item>(4);
@@ -179,9 +183,40 @@ public class Inventory : MonoBehaviour
     {
         InventorySaveData saveData = new InventorySaveData();
 
-        //saveData.
+        saveData.settings = inventorySettings;
+
+        List<ItemSaveData> items = new List<ItemSaveData>();
+
+        for (int i = 0; i < itemHolders.Count; i++)
+        {
+            if(itemHolders[i] != null)
+                items.Add(new ItemSaveData(itemHolders[i]));
+        }
+
+        saveData.items = items.ToArray();
 
         return saveData;
+    }
+
+    public void LoadSaveData(InventorySaveData saveData)
+    {
+        inventorySettings = saveData.settings;
+
+        var itemList = saveData.items;
+
+        for (int i = 0;i < itemList.Length;i++)
+        {
+            var itemInstance = loader.LoadItem(itemList[i].GetItemID(), Vector3.zero, Quaternion.identity);
+
+            if(itemInstance)
+            {
+                var itemComp = itemInstance.GetComponentInChildren<Item>();
+
+                itemList[i].SetDataToItem(itemComp);
+
+                AddItem(itemComp);
+            }
+        }
     }
 
     public Item GetActiveItem()

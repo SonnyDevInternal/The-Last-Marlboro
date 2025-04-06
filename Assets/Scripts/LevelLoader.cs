@@ -3,6 +3,13 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+public enum EGameLevel
+{
+    MainMenu,
+    Level1,
+    Level2
+}
+
 [System.Serializable]
 internal struct LevelLoaderSettings
 {
@@ -27,10 +34,7 @@ public class LevelLoader : MonoBehaviour
 
     private void CallNextLevel()
     {
-        SceneManager.LoadScene(sceneName);
-#if DEBUG
-        Debug.LogError("Failed to Load Level, Index was invalid");
-#endif
+        SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
     }
 
     private void ResetLoader()
@@ -77,9 +81,30 @@ public class LevelLoader : MonoBehaviour
         }
     }
 
-    public void TransitionToNextLevel(string levelName)
+    private string GetLevelName(EGameLevel level)
     {
-        sceneName = levelName;
+        switch (level)
+        {
+            case EGameLevel.MainMenu:
+                return "Scenes/MainMenu";
+
+            case EGameLevel.Level1:
+                return "Scenes/Level1";
+
+            case EGameLevel.Level2:
+                return "Scenes/Level2";
+
+            default:
+                return "NONE";
+        }
+    }
+
+    public void TransitionToNextLevel(EGameLevel level)
+    {
+        sceneName = GetLevelName(level);
+
+        if (sceneName == "NONE")
+            return;
 
         ResetLoader();
         SetImageTransparancy(0.0f);

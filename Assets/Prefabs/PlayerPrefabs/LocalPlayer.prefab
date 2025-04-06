@@ -468,6 +468,7 @@ Transform:
   m_Children:
   - {fileID: 4633879973338561922}
   - {fileID: 554222936987628585}
+  - {fileID: 1680445583986816589}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3408512274286538060
@@ -635,6 +636,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97d8d1094dafe37468f2f1f3a34db288, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  loader: {fileID: 7065278009960830972}
   inventorySettings:
     MaxItemCount: 4
     activateItemOnPickup: 1
@@ -965,6 +967,56 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &7400989297263900074
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1680445583986816589}
+  - component: {fileID: 7065278009960830972}
+  m_Layer: 3
+  m_Name: Loader
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1680445583986816589
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7400989297263900074}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7318846621669718995}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7065278009960830972
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7400989297263900074}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6a52b58fe6f3524480d82fa8f061926, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemLoaderList:
+    itemArray:
+    - prefabItem: {fileID: 6685033706089573348, guid: 61ee91e60ed82664c8c3d5921e81a4ab, type: 3}
+      owningID: 1
+    - prefabItem: {fileID: 198836677105547594, guid: b8bccd67f7d53c6488c93e5a5f5e546c, type: 3}
+      owningID: 2
 --- !u!1 &8188264359851685683
 GameObject:
   m_ObjectHideFlags: 0
