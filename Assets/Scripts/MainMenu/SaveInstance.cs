@@ -16,6 +16,9 @@ public class SaveInstance : MonoBehaviour
 
     private OnLoadSave onLoadSave = delegate { };
 
+    public void BindOnLoadSave(OnLoadSave loadSave) { onLoadSave += loadSave; }
+    public void UnbindOnLoadSave(OnLoadSave loadSave) { onLoadSave -= loadSave; }
+
     private void Start()
     {
         loadBtn.onClick.AddListener(OnPressLoad);

@@ -619,13 +619,13 @@ public class Player : MonoBehaviour
 
     public void SavePlayerData(bool reachedCheckPoint)
     {
-        if(reachedCheckPoint)
+        saveData.sceneID = SceneManager.GetActiveScene().buildIndex;
+
+        if (reachedCheckPoint)
         {
             saveData.position = transform.position;
             saveData.rotation = transform.rotation;
             saveData.velocity = playerRigidBody.linearVelocity;
-
-            saveData.sceneID = SceneManager.GetActiveScene().buildIndex;
         }
 
         saveData.stamina = currentStamina;

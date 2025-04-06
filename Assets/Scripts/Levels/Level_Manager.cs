@@ -28,6 +28,9 @@ public class Level_Manager : MonoBehaviour
     [SerializeField]
     private bool canLoadSaveFiles = true;
 
+    [SerializeField]
+    private bool savePlayerOnStart = true;
+
     private void Start()
     {
         if(!hasInstance)

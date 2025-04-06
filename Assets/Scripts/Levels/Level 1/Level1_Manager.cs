@@ -150,7 +150,7 @@ public class Level1_Manager : Level_Manager
 
     private void OnColliderEnter_Tunnel(ColliderHandler _this, EColliderEvent Event)
     {
-        if (!hasUnlockedExit || _this.GetCollidingObject().gameObject != player.gameObject)
+        if (!hasPlayer || !hasUnlockedExit || _this.GetCollidingObject().gameObject != player.gameObject)
             return;
 
         this.exitLevelCollider.UnbindOnTriggerColliderEvent(OnColliderEnter_Tunnel);

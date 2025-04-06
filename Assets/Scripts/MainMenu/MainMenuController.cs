@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -85,6 +86,8 @@ public class MainMenuController : MonoBehaviour
             var saveInstance = obj.GetComponent<SaveInstance>();
 
             saveInstance.SetSaveIndex(i);
+
+            saveInstance.BindOnLoadSave(OnPressedSaveInstanceButton);
 
             obj.SetActive(false);
 
@@ -184,6 +187,24 @@ public class MainMenuController : MonoBehaviour
         currentMenuState = nextState;
     }
 
+    private void OnPressedSaveInstanceButton(int index)
+    {
+        SaveSystem.SetTargetFileName(gatheredSaveFiles[index]);
+
+        var saveData = saveSystem.GetSaveFileData();
+
+        if (saveData.HasValue)
+            SceneManager.LoadScene(saveData.Value.playerSaveData.sceneID, LoadSceneMode.Single);
+        else
+        {
+            saveInstances.Remove(saveInstances[index]);
+
+            OnPressedGoBack();
+
+            UpdateMenuState(EMainMenuState.none);
+        }
+    }
+
     void OnPressedGoBack()
     {
         switch (currentMenuState)
@@ -230,6 +251,8 @@ public class MainMenuController : MonoBehaviour
 
     void OnPressedNewGame()
     {
+        SaveSystem.SetTargetFileName(Environment.TickCount.ToString());
+
         SceneManager.LoadScene("Level1", LoadSceneMode.Single);
     }
 

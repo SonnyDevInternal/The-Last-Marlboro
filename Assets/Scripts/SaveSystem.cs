@@ -143,7 +143,7 @@ public class SaveSystem : MonoBehaviour
         return SetSaveFileData(fileName, currentPath);
     }
 
-    public void SetTargetFileName(string fileName)
+    public static void SetTargetFileName(string fileName)
     {
         hasTargetFile = true;
         currentFileName = fileName;

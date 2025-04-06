@@ -4334,6 +4334,7 @@ MonoBehaviour:
   DEBUG_TriggerSave: 0
   DEBUG_TriggerLoad: 0
   canLoadSaveFiles: 0
+  savePlayerOnStart: 1
   pickupIndicator: {fileID: 1521142488}
   normalGun: {fileID: 6375458741421703905}
   heavyGun: {fileID: 6375458740350095339}
