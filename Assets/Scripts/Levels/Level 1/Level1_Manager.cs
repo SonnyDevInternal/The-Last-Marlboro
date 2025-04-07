@@ -53,7 +53,13 @@ public class Level1_Manager : Level_Manager
 
         enemyQuest.SetQuestText(GetEnemyQuestText());
 
-        questSystem.AddQuest(gunQuest);
+        if(!gunQuest.HasQuestBeenFinished())
+            questSystem.AddQuest(gunQuest);
+        else
+        {
+            loader.TransitionToNextLevel(EGameLevel.Level2, true);
+        }
+
     }
 
     private void IntializeEnemiesForQuest()
@@ -102,7 +108,7 @@ public class Level1_Manager : Level_Manager
 
         if (enemiesKilled >= levelEnemies.Count)
         {
-            questSystem.RemoveQuest(enemyQuest.GetQuestID());
+            questSystem.FinishQuest(enemyQuest.GetQuestID());
 
             questSystem.AddQuest(exitQuest);
 
@@ -118,7 +124,7 @@ public class Level1_Manager : Level_Manager
 
     private void OnInteractEvent(Interactable _this, Player player)
     {
-        questSystem.RemoveQuest(gunQuest.GetQuestID());
+        questSystem.FinishQuest(gunQuest.GetQuestID());
 
         questSystem.AddQuest(enemyQuest);
 

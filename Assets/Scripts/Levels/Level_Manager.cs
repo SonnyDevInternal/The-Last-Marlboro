@@ -6,7 +6,7 @@ public class Level_Manager : MonoBehaviour
     static public Level_Manager instance = null;
     static public bool hasInstance = false;
 
-    private LevelLoader loader = null;
+    protected LevelLoader loader = null;
 
     protected SaveSystem saveSystem = null;
 

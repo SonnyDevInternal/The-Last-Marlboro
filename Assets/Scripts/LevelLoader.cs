@@ -99,7 +99,7 @@ public class LevelLoader : MonoBehaviour
         }
     }
 
-    public void TransitionToNextLevel(EGameLevel level)
+    public void TransitionToNextLevel(EGameLevel level, bool loadLevelInstant = false)
     {
         sceneName = GetLevelName(level);
 
@@ -109,7 +109,7 @@ public class LevelLoader : MonoBehaviour
         ResetLoader();
         SetImageTransparancy(0.0f);
 
-        if (levelLoaderSettings.transitionExit)
+        if (levelLoaderSettings.transitionExit && !loadLevelInstant)
             isActive = true;
         else
             CallNextLevel();

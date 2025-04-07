@@ -116,6 +116,16 @@ public class QuestSystem : MonoBehaviour
         }
     }
 
+    public void FinishQuest(int questID)
+    {
+        if (activeQuests.TryGetValue(questID, out Quest quest))
+        {
+            quest.EndQuest();
+
+            RemoveQuest(questID);
+        }
+    }
+
     public Quest GetQuest(int questID)
     {
         if(activeQuests.TryGetValue(questID, out Quest quest))

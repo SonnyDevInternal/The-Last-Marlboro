@@ -15,7 +15,7 @@ TagManager:
   - Obstacle
   - Interactable
   - Hitbox
-  - 
+  - IgnoreNavMesh
   - 
   - 
   - 

@@ -29,6 +29,8 @@ public struct QuestSaveData
 
     public int progress;
 
+    public bool hasQuestFinished;
+
     public QuestSettings settings;
 }
 
@@ -60,6 +62,8 @@ public class Quest : MonoBehaviour
     private bool isUiActive = false;
 
     private bool hasBeenIntialized = false;
+
+    private bool isFinished = false;
 
     [SerializeField]
     protected QuestSettings questSettings = new QuestSettings();
@@ -93,6 +97,11 @@ public class Quest : MonoBehaviour
         return questName;
     }
 
+    public bool HasQuestBeenFinished()
+    {
+        return isFinished;
+    }
+
     public void SetQuestActive()
     {
         isActive = true;
@@ -120,6 +129,8 @@ public class Quest : MonoBehaviour
 
     public void EndQuest()
     {
+        isFinished = true;
+
         SendQuestEvent(EQuestEvent.OnEndQuest);
     }
 
@@ -152,6 +163,7 @@ public class Quest : MonoBehaviour
             return;
 
         progress = data.progress;
+        isFinished = data.hasQuestFinished;
         questSettings = data.settings;
     }
 
@@ -170,6 +182,7 @@ public class Quest : MonoBehaviour
             saveData.settings = questSettings;
             saveData.sceneID = sceneID;
             saveData.questID = questID;
+            saveData.hasQuestFinished = isFinished;
 
             return saveData;
         }

@@ -61,6 +61,9 @@ public class BaseGun : Item
                 {
                     var currentLayer = hit.transform.gameObject.layer;
 
+                    if (1 << currentLayer == EnemyBase.GetPlayerLayerMask())
+                        return;
+
                     if (currentLayer == hitboxLayer)
                     {
                         Debug.Log("Hit Enemy!");
