@@ -5,7 +5,7 @@ public class Interactable : MonoBehaviour
     [SerializeField]
     protected float MinDistanceToInteract = 4.0f;
 
-    protected string InteractableName = "Default_Interactable";
+    protected string InteractableName = "Interact";
 
     [SerializeField]
     protected bool isInteractable = true;

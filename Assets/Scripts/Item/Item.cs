@@ -121,7 +121,9 @@ public abstract class Item : Interactable
         hasItemColliders = (owningColliders != null && owningColliders.Length > 0);
         hasRigidBody = (owningRigidBody != null);
 
-        if(itemSettings.setStateOnStart)
+        InteractableName = "pickup " + itemName;
+
+        if (itemSettings.setStateOnStart)
             UpdateItemValues(true);
 
         OnItemStart();

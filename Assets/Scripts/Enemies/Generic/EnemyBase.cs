@@ -65,6 +65,7 @@ public abstract class EnemyBase : MonoBehaviour
     static private bool triedFindingPlayer = false;
 
     static protected bool hasTargetingPlayer = false;
+    static protected bool canEnemiesTargetPlayer = false;
 
     protected NavMeshAgent agent = null;
     protected Animator animator = null;
@@ -415,6 +416,9 @@ public abstract class EnemyBase : MonoBehaviour
 
     private Player FindPlayer()
     {
+        if (canEnemiesTargetPlayer)
+            return null;
+
         return FindFirstObjectByType<Player>();
     }
 
@@ -590,6 +594,14 @@ public abstract class EnemyBase : MonoBehaviour
         }
 
         OnEnemyHealthChanged(value);
+    }
+
+    public static void SetEnemiesIgnorePlayer(bool value)
+    {
+        bool val = !value;
+
+        canEnemiesTargetPlayer = val;
+        hasTargetingPlayer = val;
     }
 
     public static int GetPlayerLayerMask()

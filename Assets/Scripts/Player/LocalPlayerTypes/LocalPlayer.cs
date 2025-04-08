@@ -1,5 +1,13 @@
+using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
+
+internal enum ECrosshairState
+{
+    None, 
+    InteractableFocus
+}
 
 public class LocalPlayer : MonoBehaviour
 {
@@ -27,7 +35,18 @@ public class LocalPlayer : MonoBehaviour
     private UI_Crosshair crosshair = null;
 
     [SerializeField]
+    private TextMeshProUGUI interactText = null;
+
+    [SerializeField]
     private float xCameraLock = 90.0f;
+
+    [SerializeField]
+    private Color crosshair_InteractColor = Color.green;
+
+    [SerializeField]
+    private Color crosshair_NormalColor = Color.white;
+
+    private ECrosshairState crosshairState = ECrosshairState.None;
 
     private int ItemSlots = 4;
 
@@ -36,8 +55,11 @@ public class LocalPlayer : MonoBehaviour
     private bool hasGameStateUI = false;
     private bool hasStaminaSliderUI = false;
     private bool hasHealthSliderUI = false;
-    
+    private bool hasCrosshairUI = false;
+    private bool hasInteractText = false;
+
     protected bool mouseLocked = false;
+
 
     private void Start()
     {
@@ -45,8 +67,13 @@ public class LocalPlayer : MonoBehaviour
         this.hasStaminaSliderUI = staminaBar != null;
         this.hasGameStateUI = gameState != null;
         this.hasHealthSliderUI = healthBar != null;
+        this.hasCrosshairUI = crosshair != null;
+        this.hasInteractText = interactText != null;
 
-        if(owningPlayer)
+        if(this.hasInteractText)
+            interactText.enabled = false;
+
+        if (owningPlayer)
             BindPlayer(owningPlayer);
     }
 
@@ -92,6 +119,51 @@ public class LocalPlayer : MonoBehaviour
         if (!this.hasPlayer)
             return;
 
+        if(hasCrosshairUI)
+        {
+            var camTransform = playerCamera.transform;
+
+            var interactable = this.owningPlayer.SteadyRaycastInteract(camTransform.position, camTransform.forward);
+
+
+            switch (crosshairState)
+            {
+                case ECrosshairState.None:
+                    if(interactable)
+                    {
+                        crosshairState = ECrosshairState.InteractableFocus;
+
+                        crosshair.SetCrosshairColor(crosshair_InteractColor);
+                        crosshair.SetCrosshairSize(0.5f);
+
+                        if(hasInteractText)
+                        {
+                            interactText.text = interactable.GetInteractableName(); //
+
+                            interactText.enabled = true;
+                        }
+                    }
+                    break;
+
+                case ECrosshairState.InteractableFocus:
+                    if(!interactable)
+                    {
+                        crosshairState = ECrosshairState.None;
+
+                        crosshair.SetCrosshairColor(crosshair_NormalColor);
+                        crosshair.SetCrosshairSize(1f);
+
+                        if (hasInteractText)
+                        {
+                            interactText.enabled = false;
+                        }
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+        }
     }
 
     protected virtual void OnInitialized()

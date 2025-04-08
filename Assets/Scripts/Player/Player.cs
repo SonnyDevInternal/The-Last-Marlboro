@@ -74,6 +74,9 @@ public class Player : MonoBehaviour
     protected Rigidbody playerRigidBody = null;
     protected CapsuleCollider playerCapsuleCollider = null;
 
+    [SerializeField]
+    protected Canvas playerCanvas = null;
+
     private bool isGrounded = false;
     private bool isForcedSliding = false;
 
@@ -511,9 +514,19 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void SteadyRaycastInteract(Vector3 lookPos, Vector3 lookDirection)
+    public Interactable SteadyRaycastInteract(Vector3 lookPos, Vector3 lookDirection)
     {
+        if (Physics.Raycast(lookPos, lookDirection, out RaycastHit hit, interactDistance, 1 << Item.GetInteractableLayer()))
+        {
+            var interactable = hit.transform.GetComponent<Interactable>();
 
+            if (interactable)
+            {
+                return interactable;
+            }
+        }
+
+        return null;
     }
 
     public void SetCharacterID(PlayerCharacterID ID)
@@ -655,5 +668,10 @@ public class Player : MonoBehaviour
 
             playerRigidBody.linearVelocity = saveData.velocity;
         }
+    }
+
+    public void SetUICanvas(bool value)
+    {
+        playerCanvas.enabled = value;
     }
 }
