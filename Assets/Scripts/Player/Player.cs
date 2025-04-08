@@ -511,6 +511,11 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void SteadyRaycastInteract(Vector3 lookPos, Vector3 lookDirection)
+    {
+
+    }
+
     public void SetCharacterID(PlayerCharacterID ID)
     {
         this.characterID = ID;

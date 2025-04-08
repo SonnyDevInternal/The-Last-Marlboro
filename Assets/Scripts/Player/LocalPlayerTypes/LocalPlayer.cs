@@ -23,6 +23,9 @@ public class LocalPlayer : MonoBehaviour
     [SerializeField]
     private Slider sensitivitySlider = null;
 
+    [SerializeField] 
+    private UI_Crosshair crosshair = null;
+
     [SerializeField]
     private float xCameraLock = 90.0f;
 

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 [System.Serializable]
 public struct GunSettings
@@ -21,7 +22,14 @@ public class BaseGun : Item
     protected int gunDamage = 4;
     protected int gunAmmo = 7;
 
+    protected int gunRayIgnoreMask = 0;
+
     protected float lastGunShootTimer = 0;
+
+    protected override void OnItemStart()
+    {
+        gunRayIgnoreMask = LayerMask.GetMask(new string[] { "Interactable", "Player", "Ignore Raycast" });
+    }
 
     protected virtual void OnGunHitParticle(Material hitMaterial, Vector3 position, Vector3 direction)
     {
@@ -57,7 +65,7 @@ public class BaseGun : Item
                 Debug.DrawRay(lcTransform.position, lcTransform.forward * gunSettings.gunRayDistance, Color.green, 10.0f);
 #endif
 
-                if (Physics.Raycast(lcTransform.position, lcTransform.forward, out RaycastHit hit, gunSettings.gunRayDistance, ~(EnemyBase.GetPlayerLayerMask() | (1 << IgnoreRaycastLayer))))
+                if (Physics.Raycast(lcTransform.position, lcTransform.forward, out RaycastHit hit, gunSettings.gunRayDistance, ~gunRayIgnoreMask))
                 {
                     var currentLayer = hit.transform.gameObject.layer;
 

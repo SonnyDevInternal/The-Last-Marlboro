@@ -3,10 +3,12 @@ using UnityEngine;
 public class Interactable : MonoBehaviour
 {
     [SerializeField]
-    protected bool isInteractable = true;
+    protected float MinDistanceToInteract = 4.0f;
+
+    protected string InteractableName = "Default_Interactable";
 
     [SerializeField]
-    protected float MinDistanceToInteract = 4.0f;
+    protected bool isInteractable = true;
 
     public delegate void OnInteracted(Interactable _this, Player player);
 
@@ -33,5 +35,10 @@ public class Interactable : MonoBehaviour
     public virtual bool CanInteract(Vector3 playerPos)
     {
         return Vector3.Distance(transform.position, playerPos) <= MinDistanceToInteract;
+    }
+
+    public virtual string GetInteractableName()
+    {
+        return "Press E To " + InteractableName;
     }
 }
