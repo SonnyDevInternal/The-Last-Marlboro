@@ -272,10 +272,10 @@ RectTransform:
   - {fileID: 3647087499307509647}
   m_Father: {fileID: 5903907820569831455}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 145.26965, y: 53.23004}
-  m_SizeDelta: {x: 239.7, y: 21.3}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: -141, y: 53.23004}
+  m_SizeDelta: {x: 239.69995, y: 21.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8766649484806703677
 CanvasRenderer:
@@ -560,9 +560,9 @@ RectTransform:
   - {fileID: 2396236094275109325}
   m_Father: {fileID: 5903907820569831455}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 145.26965, y: 30.156097}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: -140.99994, y: 30.156097}
   m_SizeDelta: {x: 239.69995, y: 21.299988}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2364672782843454154
@@ -1035,6 +1035,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   head: {fileID: 0}
   leftHand: {fileID: 5460006362852529972}
+  playerCanvas: {fileID: 549283732005321229}
   playerDrag: 40
   terminalVelocity: 30
   isConsumingStamina: 1
