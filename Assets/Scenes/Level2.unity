@@ -4625,6 +4625,59 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 69dd771ee945d854390345e34256cfd4, type: 3}
+--- !u!1 &956985537
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 956985541}
+  - component: {fileID: 956985538}
+  m_Layer: 0
+  m_Name: DoorEnterCollider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!65 &956985538
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 956985537}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &956985541
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 956985537}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 60.522, y: 2.551, z: 27.0977}
+  m_LocalScale: {x: 1, y: 2.9837005, z: 1.6370604}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &999825153
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11938,7 +11991,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 34546e3c5bf9b2c4694c434f48e5e8a2, type: 2}
-  - {fileID: 2100000, guid: ab544f9ce9a90db4f92c420e76a74643, type: 2}
+  - {fileID: 2100000, guid: 53774a04b6a80d04f8dccef9fd66c167, type: 2}
   - {fileID: 2100000, guid: a1b2af493ef38fe408b28264c1961876, type: 2}
   - {fileID: 2100000, guid: 0d89667cfabc07546b20befbe1c55b65, type: 2}
   m_StaticBatchInfo:
@@ -13706,3 +13759,4 @@ SceneRoots:
   - {fileID: 1553653001}
   - {fileID: 4767124843510760976}
   - {fileID: 8223202944883288344}
+  - {fileID: 956985541}
