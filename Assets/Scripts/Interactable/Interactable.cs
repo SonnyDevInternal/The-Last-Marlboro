@@ -24,7 +24,7 @@ public class Interactable : MonoBehaviour
 
     public void Interact(Player player)
     {
-        if (!CanInteract(player.transform.position))
+        if (!enabled || !CanInteract(player.transform.position))
             return;
 
         OnInteract(player);

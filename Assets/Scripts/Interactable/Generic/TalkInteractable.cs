@@ -19,7 +19,8 @@ public enum ETalkEvent
 {
     Start,
     TalkStep,
-    End
+    End,
+    ScriptDestroyed
 }
 
 public class TalkInteractable : Interactable
@@ -69,6 +70,11 @@ public class TalkInteractable : Interactable
     private void Start()
     {
         ActivateTalkUI(false);
+    }
+
+    private void OnDestroy()
+    {
+        onTalkEvent(this, ETalkEvent.ScriptDestroyed);
     }
 
     private void Update()

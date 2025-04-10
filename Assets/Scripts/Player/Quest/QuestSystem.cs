@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEditor.Overlays;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,6 +12,8 @@ public class QuestSystem : MonoBehaviour
     private float yQuestUIPadding = 15.0f; // in Px
 
     private float currentUIYPos = 0.0f;
+
+    private List<QuestSaveData> cachedSaveDatas = new List<QuestSaveData>();
 
     private Dictionary<int, Quest> activeQuests = new Dictionary<int, Quest>();
 
@@ -148,6 +151,11 @@ public class QuestSystem : MonoBehaviour
                 questsSave.Add(saveData.Value);
         }
 
+        for (int i = 0; i < cachedSaveDatas.Count; i++)
+        {
+            questsSave.Add(cachedSaveDatas[i]);
+        }
+
         return questsSave.ToArray();
     }
 
@@ -158,13 +166,21 @@ public class QuestSystem : MonoBehaviour
         for (int i = 0; i < questSaveDatas.Length; i++)
         {
             if (questSaveDatas[i].sceneID != sceneIDCur)
+            {
+                cachedSaveDatas.Add(questSaveDatas[i]);
+
                 continue;
+            }
 
             var quest = Quest.FindQuest(questSaveDatas[i].questID);
 
             if(quest != null )
             {
                 quest.LoadSaveData(questSaveDatas[i]);
+            }
+            else
+            {
+                cachedSaveDatas.Add(questSaveDatas[i]);
             }
         }
     }

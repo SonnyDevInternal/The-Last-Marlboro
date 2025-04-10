@@ -39,6 +39,8 @@ public class Quest : MonoBehaviour
 {
     static private Dictionary<int, Quest> allQuests = new Dictionary<int, Quest>();
 
+    static private bool haveQuestsIntialized = false;
+
     [SerializeField]
     private TextMeshProUGUI questTextUI = null;
 
@@ -116,6 +118,8 @@ public class Quest : MonoBehaviour
         if (hasBeenIntialized)
             return;
 
+        haveQuestsIntialized = true;
+
         hasBeenIntialized = true;
 
         currentUITransform = GetComponent<RectTransform>();
@@ -157,14 +161,16 @@ public class Quest : MonoBehaviour
         canvasRenderer.cull = !active;
     }
 
-    public void LoadSaveData(QuestSaveData data)
+    public bool LoadSaveData(QuestSaveData data)
     {
         if (data.sceneID != sceneID || data.questID != questID)
-            return;
+            return false;
 
         progress = data.progress;
         isFinished = data.hasQuestFinished;
         questSettings = data.settings;
+
+        return true;
     }
 
     public bool HasBeenIntialized()
@@ -215,8 +221,23 @@ public class Quest : MonoBehaviour
         return currentUITransform;
     }
 
+    static private void IntializeQuests()
+    {
+        var quests_ = Object.FindObjectsByType<Quest>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+
+        for (int i = 0; i < quests_.Length; i++)
+        {
+            quests_[i].IntializeQuest();
+        }
+    }
+
     static public Quest FindQuest(int questID)
     {
+        if(!haveQuestsIntialized)
+        {
+            IntializeQuests();
+        }
+
         if (allQuests.TryGetValue(questID, out Quest quest))
             return quest;
 

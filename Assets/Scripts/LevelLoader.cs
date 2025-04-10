@@ -7,7 +7,8 @@ public enum EGameLevel
 {
     MainMenu,
     Level1,
-    Level2
+    Level2,
+    Level2_TobaccoShop
 }
 
 [System.Serializable]
@@ -93,6 +94,9 @@ public class LevelLoader : MonoBehaviour
 
             case EGameLevel.Level2:
                 return "Scenes/Level2";
+
+            case EGameLevel.Level2_TobaccoShop:
+                return "Scenes/Level2_SubLevels/TobaccoShop";
 
             default:
                 return "NONE";
