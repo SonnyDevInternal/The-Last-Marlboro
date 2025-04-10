@@ -51,6 +51,8 @@ public class Level_Manager : MonoBehaviour
         if(canLoadSaveFiles)
             LoadData();
 
+        SaveData();
+
         OnStartLevelManager();
     }
 

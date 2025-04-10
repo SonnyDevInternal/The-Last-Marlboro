@@ -228,6 +228,11 @@ public abstract class Item : Interactable
         this.onItemEvent.Invoke(this, Event);
     }
 
+    protected virtual void OnInternalItemEvent(EItemEvent Event)
+    {
+
+    }
+
     private void UpdateItemValues(bool itemActive)
     {
         this.isActive = itemActive;

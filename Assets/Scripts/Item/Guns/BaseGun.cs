@@ -1,12 +1,13 @@
 using UnityEngine;
-using UnityEngine.UI;
 
 [System.Serializable]
 public struct GunSettings
 {
     public float gunRayDistance;
     public float gunShootTimer;
+    public int gunDamage;
 }
+
 
 public class BaseGun : Item
 {
@@ -19,9 +20,6 @@ public class BaseGun : Item
     [SerializeField]
     protected GunSettings gunSettings = new GunSettings();
 
-    protected int gunDamage = 4;
-    protected int gunAmmo = 7;
-
     protected int gunRayIgnoreMask = 0;
 
     protected float lastGunShootTimer = 0;
@@ -29,6 +27,26 @@ public class BaseGun : Item
     protected override void OnItemStart()
     {
         gunRayIgnoreMask = LayerMask.GetMask(new string[] { "Interactable", "Player", "Ignore Raycast" });
+    }
+
+    public override string OnGetItemSave()
+    {
+        return JsonUtility.ToJson(gunSettings);
+    }
+
+    public override void OnSetItemSave(string saveData)
+    {
+        try
+        {
+            var gun = JsonUtility.FromJson<GunSettings>(saveData);
+
+            gunSettings.gunShootTimer = gun.gunShootTimer;
+            gunSettings.gunDamage = gun.gunDamage;
+            gunSettings.gunRayDistance = gun.gunRayDistance;
+        }
+        catch (System.Exception)
+        {
+        }
     }
 
     protected virtual void OnGunHitParticle(Material hitMaterial, Vector3 position, Vector3 direction)
@@ -41,7 +59,7 @@ public class BaseGun : Item
     private void OnGunHit(Hitbox hitbox)
     {
         if(hitbox)
-            hitbox.DamageEnemy(gunDamage);
+            hitbox.DamageEnemy(gunSettings.gunDamage);
     }
 
     protected override void OnUseItem()

@@ -10012,6 +10012,14 @@ PrefabInstance:
       propertyPath: itemName
       value: Fast Gun
       objectReference: {fileID: 0}
+    - target: {fileID: 8890251808788216905, guid: 61ee91e60ed82664c8c3d5921e81a4ab, type: 3}
+      propertyPath: gunSettings.gunDamage
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8890251808788216905, guid: 61ee91e60ed82664c8c3d5921e81a4ab, type: 3}
+      propertyPath: gunSettings.gunShootTimer
+      value: 0.1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -10226,6 +10234,14 @@ PrefabInstance:
     - target: {fileID: 7579269940951263899, guid: b8bccd67f7d53c6488c93e5a5f5e546c, type: 3}
       propertyPath: itemName
       value: Heavy Gun
+      objectReference: {fileID: 0}
+    - target: {fileID: 7579269940951263899, guid: b8bccd67f7d53c6488c93e5a5f5e546c, type: 3}
+      propertyPath: gunSettings.gunDamage
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 7579269940951263899, guid: b8bccd67f7d53c6488c93e5a5f5e546c, type: 3}
+      propertyPath: gunSettings.gunShootTimer
+      value: 0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
