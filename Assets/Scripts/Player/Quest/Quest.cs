@@ -201,9 +201,10 @@ public class Quest : MonoBehaviour
         return progress;
     }
 
+
     public int GetQuestID()
     {
-        return sceneID;
+        return questID;
     }
 
     public bool IsUIActive()

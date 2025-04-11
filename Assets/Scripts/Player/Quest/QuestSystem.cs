@@ -184,4 +184,17 @@ public class QuestSystem : MonoBehaviour
             }
         }
     }
+
+    public QuestSaveData? FindQuestSaveData(int sceneID, int questID)
+    {
+        var quests = GetQuestSaveDatas();
+
+        for (int i = 0; i < quests.Length; i++)
+        {
+            if (quests[i].questID == questID && quests[i].sceneID == sceneID)
+                return quests[i];
+        }
+
+        return null;
+    }
 }
