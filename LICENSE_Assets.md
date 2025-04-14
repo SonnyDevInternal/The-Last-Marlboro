@@ -19,7 +19,7 @@ No additional restrictions — You may not apply legal terms or technological me
 ---
 
 ## 🛠️ Ownership & Scope
-This project includes my original works, such as **custom images, design elements, and code**.  
+This project includes my original works, such as **custom images, design elements, 3D Models, Animations, and code**.  
 These original works are protected under the **CC BY-NC 4.0 license**, and all rights are reserved unless otherwise stated.  
 
 Any third-party assets used in this project are explicitly marked in the **"Third-Party Assets"** section and are **NOT covered under this license**.  
