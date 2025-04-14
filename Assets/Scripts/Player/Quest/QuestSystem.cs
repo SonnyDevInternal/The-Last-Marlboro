@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEditor.Overlays;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -82,6 +81,12 @@ public class QuestSystem : MonoBehaviour
         quest.SetUIActive(false);
 
         RecalculateQuestUIs();
+    }
+
+    private void AddCachedQuest(QuestSaveData saveData)
+    {
+        if(!cachedSaveDatas.Contains(saveData))
+            cachedSaveDatas.Add(saveData);
     }
 
     public void AddQuest(Quest quest)
@@ -167,8 +172,7 @@ public class QuestSystem : MonoBehaviour
         {
             if (questSaveDatas[i].sceneID != sceneIDCur)
             {
-                cachedSaveDatas.Add(questSaveDatas[i]);
-
+                AddCachedQuest(questSaveDatas[i]);
                 continue;
             }
 
@@ -180,7 +184,10 @@ public class QuestSystem : MonoBehaviour
             }
             else
             {
-                cachedSaveDatas.Add(questSaveDatas[i]);
+#if DEBUG
+                Debug.Log("Couldn't Find Quest for QuestSaveData: " + questSaveDatas[i]);
+#endif
+                AddCachedQuest(questSaveDatas[i]);
             }
         }
     }
@@ -196,5 +203,19 @@ public class QuestSystem : MonoBehaviour
         }
 
         return null;
+    }
+
+    public void FindQuestAndSetSaveData(int sceneID, int questID, QuestSaveData saveData)
+    {
+        var quests = GetQuestSaveDatas();
+
+        for (int i = 0; i < quests.Length; i++)
+        {
+            if (quests[i].questID == questID && quests[i].sceneID == sceneID)
+            {
+                quests[i] = saveData;
+                break;
+            }
+        }
     }
 }

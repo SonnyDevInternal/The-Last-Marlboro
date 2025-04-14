@@ -263,6 +263,8 @@ public class MainMenuController : MonoBehaviour
 
     void Start()
     {
+        Cursor.lockState = CursorLockMode.None;
+
         saveSystem = GetComponent<SaveSystem>();
 
         goBackButton.onClick.AddListener(OnPressedGoBack);

@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using UnityEditor.Overlays;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class Level1_Manager : Level_Manager
 {

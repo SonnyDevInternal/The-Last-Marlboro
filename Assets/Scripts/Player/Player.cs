@@ -375,6 +375,14 @@ public class Player : MonoBehaviour
             this.playerRigidBody.position = position;
     }
 
+    public void SetRotation(Quaternion rotation)
+    {
+        transform.rotation = rotation;
+
+        if (!this.playerRigidBody.isKinematic)
+            this.playerRigidBody.rotation = rotation;
+    }
+
     public void OnRotateCharacter(Vector3 addValue)
     {
         this.transform.Rotate(addValue);

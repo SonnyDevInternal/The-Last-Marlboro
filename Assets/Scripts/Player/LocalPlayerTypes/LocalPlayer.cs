@@ -129,7 +129,7 @@ public class LocalPlayer : MonoBehaviour
             switch (crosshairState)
             {
                 case ECrosshairState.None:
-                    if(interactable)
+                    if(interactable && interactable.GetIsInteractable())
                     {
                         crosshairState = ECrosshairState.InteractableFocus;
 

@@ -1033,7 +1033,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c09518bf6d3371440899134513a1fe90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  head: {fileID: 0}
+  head: {fileID: 5023422458017829072}
   leftHand: {fileID: 5460006362852529972}
   playerCanvas: {fileID: 549283732005321229}
   playerDrag: 40

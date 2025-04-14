@@ -267,7 +267,7 @@ MonoBehaviour:
     canBeAngered: 1
     canPatrol: 0
     shouldLookAtPlayer: 1
-    useBasicHitboxes: 0
+    useBasicHitboxes: 1
   patrollingTargets: []
   head: {fileID: 1859661856787397587}
   smokerSettings:
@@ -303,7 +303,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 9.27
-  m_BaseOffset: 1.36
+  m_BaseOffset: 1.41
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!1 &992967582481200719
@@ -403,7 +403,7 @@ Transform:
   m_GameObject: {fileID: 1756165889488137476}
   serializedVersion: 2
   m_LocalRotation: {x: -0.000000037748947, y: 0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.66, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

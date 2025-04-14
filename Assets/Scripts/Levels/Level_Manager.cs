@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+[DefaultExecutionOrder(300)]
 public class Level_Manager : MonoBehaviour
 {
     static public Level_Manager instance = null;
@@ -68,7 +69,7 @@ public class Level_Manager : MonoBehaviour
     }
 
 #if DEBUG
-    private void Update()
+    protected void Update()
     {
         if(DEBUG_TriggerSave)
         {

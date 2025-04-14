@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -34,6 +35,7 @@ public struct EnemySettings
     public bool canAttackPlayer;
     public bool canBeAngered;
     public bool canPatrol;
+    public bool canAlwaysSeePlayer;
 
     public bool shouldLookAtPlayer;
     public bool useBasicHitboxes;
@@ -52,6 +54,12 @@ public enum EDeathSource
     Player
 }
 
+public enum EEnemyEvent
+{
+    OnDamaged,
+    OnHealed
+}
+
 public abstract class EnemyBase : MonoBehaviour
 {
     static protected Player TargetingPlayer = null;
@@ -63,9 +71,9 @@ public abstract class EnemyBase : MonoBehaviour
 
     //An Enemy already searched for Player this frame so skip
     static private bool triedFindingPlayer = false;
+    static private bool forceIdiled = false;
 
     static protected bool hasTargetingPlayer = false;
-    static protected bool canEnemiesTargetPlayer = false;
 
     protected NavMeshAgent agent = null;
     protected Animator animator = null;
@@ -94,17 +102,23 @@ public abstract class EnemyBase : MonoBehaviour
 
     private int ANIMATOR_characterSpeed_ID = 0;
     private int ANIMATOR_idilingTime_ID = 0;
+    private int ANIMATOR_idilingIndex_ID = 0;
 
     private bool isSeeingPlayer = false;
     private bool isDead = false;
     private bool isIdling = false;
+    private bool hasIdlingModes = false;
 
+    public delegate void OnEnemyEvent(EnemyBase enemy, EEnemyEvent Event);
     public delegate void OnDestroyingEnemy(EnemyBase enemy, EDeathSource deathSource);
 
-    protected OnDestroyingEnemy onDestroyingEnemy;
+    protected OnEnemyEvent onEnemyEvent = delegate { };
+    protected OnDestroyingEnemy onDestroyingEnemy = delegate { };
 
+    public void BindOnEnemyEvent(OnEnemyEvent enemy) { onEnemyEvent += enemy; }
     public void BindOnDestroyingEnemy(OnDestroyingEnemy enemy) { onDestroyingEnemy += enemy; }
 
+    public void UnbindOnEnemyEvent(OnEnemyEvent enemy) { onEnemyEvent -= enemy; }
     public void UnbindOnDestroyingEnemy(OnDestroyingEnemy enemy) { onDestroyingEnemy -= enemy; }
 
     void Start()
@@ -131,7 +145,7 @@ public abstract class EnemyBase : MonoBehaviour
 
         if(enemySettings.useBasicHitboxes)
         {
-            var hitboxes = GetComponentsInChildren<Hitbox>();
+            var hitboxes = GetComponentsInChildren<Hitbox>(true);
 
             for (int i = 0; i < hitboxes.Length; i++)
             {
@@ -144,6 +158,9 @@ public abstract class EnemyBase : MonoBehaviour
 
         ANIMATOR_characterSpeed_ID = Animator.StringToHash("characterSpeed");
         ANIMATOR_idilingTime_ID = Animator.StringToHash("idilingTime");
+        ANIMATOR_idilingIndex_ID = Animator.StringToHash("IdlingMode");
+
+        hasIdlingModes = HasParameter("IdlingMode");
 
         SetIdiling(true);
 
@@ -201,8 +218,12 @@ public abstract class EnemyBase : MonoBehaviour
         if (isDead)
         {
             OnEnemyDiedUpdate();
+
             return;
         }
+
+        if (forceIdiled)
+            return;
 
         if (!triedFindingPlayer && !hasTargetingPlayer)
         {
@@ -353,10 +374,23 @@ public abstract class EnemyBase : MonoBehaviour
         triedFindingPlayer = false;
     }
 
+    private bool HasParameter(string paramName)
+    {
+        foreach (AnimatorControllerParameter param in animator.parameters)
+        {
+            if (param.name == paramName)
+                return true;
+        }
+        return false;
+    }
+
+
     private void SetIdiling(bool idle)
     {
         if (isIdling == idle)
             return;
+
+        agent.isStopped = idle;
 
         isIdling = idle;
 
@@ -416,9 +450,6 @@ public abstract class EnemyBase : MonoBehaviour
 
     private Player FindPlayer()
     {
-        if (canEnemiesTargetPlayer)
-            return null;
-
         return FindFirstObjectByType<Player>();
     }
 
@@ -434,6 +465,8 @@ public abstract class EnemyBase : MonoBehaviour
 
     private void EnemyDied()
     {
+
+
         agent.isStopped = true;
 
         isDead = true;
@@ -460,6 +493,9 @@ public abstract class EnemyBase : MonoBehaviour
     {
         if (TargetingPlayer == null || head == null) 
             return false;
+
+        if (enemySettings.canAlwaysSeePlayer)
+            return true;
 
         Vector3 directionToPlayer = (TargetingPlayer.transform.position - head.position).normalized;
 
@@ -572,6 +608,8 @@ public abstract class EnemyBase : MonoBehaviour
     {
         currentHealth -= value;
 
+        onEnemyEvent(this, EEnemyEvent.OnDamaged);
+
         if (currentHealth <= 0)
         {
             currentHealth = 0;
@@ -588,6 +626,8 @@ public abstract class EnemyBase : MonoBehaviour
     {
         currentHealth += value;
 
+        onEnemyEvent(this, EEnemyEvent.OnHealed);
+
         if (!healOverMax && currentHealth > enemySettings.enemyMaxHealth)
         {
             currentHealth = enemySettings.enemyMaxHealth;
@@ -596,12 +636,32 @@ public abstract class EnemyBase : MonoBehaviour
         OnEnemyHealthChanged(value);
     }
 
-    public static void SetEnemiesIgnorePlayer(bool value)
+    public void SetIdlingMode(int mode)
     {
-        bool val = !value;
+        if(hasIdlingModes)
+            animator.SetInteger(ANIMATOR_idilingIndex_ID, mode);
+    }
 
-        canEnemiesTargetPlayer = val;
-        hasTargetingPlayer = val;
+    public void SetEnemySettings(EnemySettings enemySettings)
+    {
+        this.enemySettings = enemySettings;
+    }
+
+    public EnemySettings GetEnemySettings()
+    {
+        return this.enemySettings;
+    }
+
+    public static void ForceIdleEnemies(bool value)
+    {
+        forceIdiled = value;
+
+        var enemies = FindObjectsByType<EnemyBase>(FindObjectsSortMode.None);
+
+        for (int i = 0; i < enemies.Length; i++)
+        {
+            enemies[i].agent.isStopped = value;
+        }
     }
 
     public static int GetPlayerLayerMask()

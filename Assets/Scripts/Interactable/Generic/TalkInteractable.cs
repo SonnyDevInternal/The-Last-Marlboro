@@ -81,7 +81,12 @@ public class TalkInteractable : Interactable
     {
         if(conversationStarted)
         {
-            if(textStep >= textShowers.Length)
+            if (Input.GetKeyDown(KeyCode.Mouse1))
+            {
+                SkipTextShower();
+            }
+
+            if (textStep >= textShowers.Length)
             {
                 EndConversation();
             }
@@ -173,7 +178,7 @@ public class TalkInteractable : Interactable
 
         ActivateTalkUI(true);
 
-        EnemyBase.SetEnemiesIgnorePlayer(true);
+        EnemyBase.ForceIdleEnemies(true);
 
         onTalkEvent(this, ETalkEvent.Start);
     }
@@ -190,7 +195,7 @@ public class TalkInteractable : Interactable
 
         ActivateTalkUI(false);
 
-        EnemyBase.SetEnemiesIgnorePlayer(false);
+        EnemyBase.ForceIdleEnemies(false);
 
         onTalkEvent(this, ETalkEvent.End);
     }

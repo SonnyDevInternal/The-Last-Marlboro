@@ -234,7 +234,7 @@ public class Quest : MonoBehaviour
 
     static public Quest FindQuest(int questID)
     {
-        if(!haveQuestsIntialized)
+        if (!haveQuestsIntialized)
         {
             IntializeQuests();
         }
